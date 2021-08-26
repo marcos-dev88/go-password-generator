@@ -53,17 +53,17 @@ func (s *service) CheckSpecialCharAndLettersQuantity(password *entity.PasswordGe
 			return errors.New("password has small quantity of specialChars")
 		}
 	case 16:
+		if len(passwordLetters) < 5 {
+			return errors.New("password has small quantity of letters")
+		}
+		if len(passwordSpecialChars) < 5 {
+			return errors.New("password has small quantity of specialChars")
+		}
+	case 32:
 		if len(passwordLetters) < 6 {
 			return errors.New("password has small quantity of letters")
 		}
 		if len(passwordSpecialChars) < 6 {
-			return errors.New("password has small quantity of specialChars")
-		}
-	case 32:
-		if len(passwordLetters) < 10 {
-			return errors.New("password has small quantity of letters")
-		}
-		if len(passwordSpecialChars) < 10 {
 			return errors.New("password has small quantity of specialChars")
 		}
 	}
@@ -84,17 +84,17 @@ func (s *service) CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGe
 			return errors.New("password has small quantity of specialChars")
 		}
 	case 16:
+		if len(passwordNumbers) < 5 {
+			return errors.New("password has small quantity of numbers")
+		}
+		if len(passwordSpecialChars) < 5 {
+			return errors.New("password has small quantity of specialChars")
+		}
+	case 32:
 		if len(passwordNumbers) < 6 {
 			return errors.New("password has small quantity of numbers")
 		}
 		if len(passwordSpecialChars) < 6 {
-			return errors.New("password has small quantity of specialChars")
-		}
-	case 32:
-		if len(passwordNumbers) < 10 {
-			return errors.New("password has small quantity of numbers")
-		}
-		if len(passwordSpecialChars) < 10 {
 			return errors.New("password has small quantity of specialChars")
 		}
 	}
@@ -114,17 +114,17 @@ func (s *service) CheckLettersAndNumbersQuantity(password *entity.PasswordGen) e
 			return errors.New("password has small quantity of letters")
 		}
 	case 16:
+		if len(passwordNumbers) < 5 {
+			return errors.New("password has small quantity of letters")
+		}
+		if len(passwordLetters) < 5 {
+			return errors.New("password has small quantity of letters")
+		}
+	case 32:
 		if len(passwordNumbers) < 6 {
 			return errors.New("password has small quantity of letters")
 		}
 		if len(passwordLetters) < 6 {
-			return errors.New("password has small quantity of letters")
-		}
-	case 32:
-		if len(passwordNumbers) < 10 {
-			return errors.New("password has small quantity of letters")
-		}
-		if len(passwordLetters) < 10 {
 			return errors.New("password has small quantity of letters")
 		}
 	}
@@ -139,6 +139,16 @@ func (s *service) CheckAllCharsQuantity(password *entity.PasswordGen) error {
 
 	switch password.Length {
 	case 8:
+		if len(passwordNumbers) < 2 {
+			return errors.New("password has small quantity of letters")
+		}
+		if len(passwordLetters) < 2 {
+			return errors.New("password has small quantity of letters")
+		}
+		if len(passwordSpecialChars) < 2 {
+			return errors.New("password has small quantity of specialChars")
+		}
+	case 16:
 		if len(passwordNumbers) < 3 {
 			return errors.New("password has small quantity of letters")
 		}
@@ -148,7 +158,7 @@ func (s *service) CheckAllCharsQuantity(password *entity.PasswordGen) error {
 		if len(passwordSpecialChars) < 3 {
 			return errors.New("password has small quantity of specialChars")
 		}
-	case 16:
+	case 32:
 		if len(passwordNumbers) < 6 {
 			return errors.New("password has small quantity of letters")
 		}
@@ -156,16 +166,6 @@ func (s *service) CheckAllCharsQuantity(password *entity.PasswordGen) error {
 			return errors.New("password has small quantity of letters")
 		}
 		if len(passwordSpecialChars) < 6 {
-			return errors.New("password has small quantity of specialChars")
-		}
-	case 32:
-		if len(passwordNumbers) < 10 {
-			return errors.New("password has small quantity of letters")
-		}
-		if len(passwordLetters) < 10 {
-			return errors.New("password has small quantity of letters")
-		}
-		if len(passwordSpecialChars) < 10 {
 			return errors.New("password has small quantity of specialChars")
 		}
 	}
