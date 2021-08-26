@@ -43,6 +43,11 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 
 	// Checking whether this password is secure
 	switch {
+	case password.HasLetter && password.HasNumber && password.HasSpecialChar:
+		err := p.passService.CheckAllCharsQuantity(password)
+		if err != nil {
+			p.GeneratePassword(password)
+		}
 	case password.HasSpecialChar && password.HasLetter:
 		err := p.passService.CheckSpecialCharAndLettersQuantity(password)
 		if err != nil {
@@ -55,11 +60,6 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 		}
 	case password.HasLetter && password.HasNumber:
 		err := p.passService.CheckLettersAndNumbersQuantity(password)
-		if err != nil {
-			p.GeneratePassword(password)
-		}
-	case password.HasLetter && password.HasNumber && password.HasSpecialChar:
-		err := p.passService.CheckAllCharsQuantity(password)
 		if err != nil {
 			p.GeneratePassword(password)
 		}
