@@ -1,6 +1,9 @@
 package entity
 
-import "regexp"
+import (
+	"github.com/google/uuid"
+	"regexp"
+)
 
 type PasswordGenerator interface {
 	GetPasswordNumbers(password string) []string
@@ -19,17 +22,17 @@ var (
 )
 
 type PasswordGen struct {
-	Uuid           string `json:"uuid"`
-	Password       string `json:"password"`
-	Length         int    `json:"length"`
-	HasLetter      bool   `json:"has_letter"`
-	HasNumber      bool   `json:"has_number"`
-	HasSpecialChar bool   `json:"has_special_char"`
+	uuid           uuid.UUID `json:"uuid"`
+	Password       string    `json:"password"`
+	Length         int       `json:"length"`
+	HasLetter      bool      `json:"has_letter"`
+	HasNumber      bool      `json:"has_number"`
+	HasSpecialChar bool      `json:"has_special_char"`
 }
 
-func NewPasswordGen(uuid, password string, length int, hasLetter, hasNumber, hasSpecialChar bool) *PasswordGen {
+func NewPasswordGen(uuid uuid.UUID, password string, length int, hasLetter, hasNumber, hasSpecialChar bool) *PasswordGen {
 	return &PasswordGen{
-		Uuid:           uuid,
+		uuid:           uuid,
 		Password:       password,
 		Length:         length,
 		HasLetter:      hasLetter,
