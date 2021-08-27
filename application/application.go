@@ -11,9 +11,10 @@ type PasswordGeneratorApp interface {
 	CreatePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
 	PasswordExists(entity.PasswordGen) bool
 	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
-	CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) error
-	CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) error
-	CheckAllCharsQuantity(password *entity.PasswordGen) error
+	CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool
+	CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool
+	CheckLettersAndNumbersQuantity(password *entity.PasswordGen) bool
+	CheckAllCharsQuantity(password *entity.PasswordGen) bool
 	CheckCharConsiderations(password entity.PasswordGen) []rune
 	GeneratePassword(password *entity.PasswordGen) (*entity.PasswordGen, error)
 }
@@ -34,9 +35,9 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 
 	//Generating a password by length
 	generatedPass, err := p.passService.GeneratePasswordByLength(password.Length, passwordChars)
-	
+
 	password.Password = generatedPass
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -44,23 +45,19 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 	// Checking whether this password is secure
 	switch {
 	case password.HasLetter && password.HasNumber && password.HasSpecialChar:
-		err := p.passService.CheckAllCharsQuantity(password)
-		if err != nil {
+		if !p.passService.CheckAllCharsQuantity(password) {
 			p.GeneratePassword(password)
 		}
 	case password.HasSpecialChar && password.HasLetter:
-		err := p.passService.CheckSpecialCharAndLettersQuantity(password)
-		if err != nil {
+		if !p.passService.CheckSpecialCharAndLettersQuantity(password) {
 			p.GeneratePassword(password)
 		}
 	case password.HasSpecialChar && password.HasNumber:
-		err := p.passService.CheckSpecialCharAndNumbersQuantity(password)
-		if err != nil {
+		if !p.passService.CheckSpecialCharAndNumbersQuantity(password) {
 			p.GeneratePassword(password)
 		}
 	case password.HasLetter && password.HasNumber:
-		err := p.passService.CheckLettersAndNumbersQuantity(password)
-		if err != nil {
+		if !p.passService.CheckLettersAndNumbersQuantity(password) {
 			p.GeneratePassword(password)
 		}
 	}
@@ -84,15 +81,19 @@ func (p *passwordGeneratorApp) GeneratePasswordByLength(length int, passCharacte
 	return p.passService.GeneratePasswordByLength(length, passCharacters)
 }
 
-func (p *passwordGeneratorApp) CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) error {
+func (p *passwordGeneratorApp) CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool {
 	return p.passService.CheckSpecialCharAndLettersQuantity(password)
 }
 
-func (p *passwordGeneratorApp) CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) error {
+func (p *passwordGeneratorApp) CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool {
 	return p.passService.CheckSpecialCharAndNumbersQuantity(password)
 }
 
-func (p *passwordGeneratorApp) CheckAllCharsQuantity(password *entity.PasswordGen) error {
+func (p *passwordGeneratorApp) CheckLettersAndNumbersQuantity(password *entity.PasswordGen) bool {
+	return p.passService.CheckLettersAndNumbersQuantity(password)
+}
+
+func (p *passwordGeneratorApp) CheckAllCharsQuantity(password *entity.PasswordGen) bool {
 	return p.passService.CheckAllCharsQuantity(password)
 }
 
