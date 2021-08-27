@@ -45,9 +45,9 @@ func main() {
 
 	handler := ui.NewHandler(app)
 
-	log.Printf("Server is running at: %s", ":8000")
+	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
 	http.HandleFunc("/password-gen/", handler.HandlePasswordGenerator)
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(os.Getenv("API_PORT"), nil))
 
 }
 
