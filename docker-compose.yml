@@ -1,0 +1,33 @@
+version: '3.4'
+services:
+  app:
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: .
+    container_name: go-password-generator-app
+    image: golang
+    env_file: "./.env"
+    ports:
+      - "8000:8095"
+    networks:
+      net:
+        ipv4_address: 172.20.0.2
+
+  mongodb:
+    image: mongo
+    container_name: mongodb-password-generator
+    env_file: "./.env"
+    ports:
+      - "28017:27017"
+    expose:
+      - 28017
+    networks:
+      net:
+        ipv4_address: 172.20.0.3
+
+networks:
+  net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
