@@ -2,10 +2,9 @@ package main
 
 import (
 	"bufio"
-	"github.com/google/uuid"
 	"github.com/marcos-dev88/go-password-generator/application"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
-	service2 "github.com/marcos-dev88/go-password-generator/domain/service"
+	"github.com/marcos-dev88/go-password-generator/domain/service"
 	"github.com/marcos-dev88/go-password-generator/infrastructure/persistence"
 	"github.com/marcos-dev88/go-password-generator/infrastructure/ui"
 	"log"
@@ -24,14 +23,8 @@ func main() {
 	db := persistence.NewMongoDB("", "", "")
 	repo := persistence.NewRepository(db)
 
-	newUuid, err := uuid.NewUUID()
-
-	if err != nil {
-		panic(err)
-	}
-
 	passwordGen := entity.NewPasswordGen(
-		newUuid,
+		"",
 		"",
 		0,
 		false,
@@ -39,9 +32,9 @@ func main() {
 		false,
 	)
 
-	service := service2.NewService(passwordGen)
+	servicePass := service.NewService(passwordGen)
 
-	app := application.NewApplication(repo, service)
+	app := application.NewApplication(repo, servicePass)
 
 	handler := ui.NewHandler(app)
 

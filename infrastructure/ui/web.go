@@ -34,7 +34,7 @@ func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Requ
 		panic(err)
 	}
 
-	password := entity.NewPasswordGen(newUuid, "", 0, false, false, false)
+	password := entity.NewPasswordGen(newUuid.String(), "", 0, false, false, false)
 
 	if err := decoder.Decode(&password); err != nil {
 		panic(err)

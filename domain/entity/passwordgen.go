@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"github.com/google/uuid"
 	"regexp"
 )
 
@@ -22,7 +21,7 @@ var (
 )
 
 type PasswordGen struct {
-	uuid           uuid.UUID `json:"uuid"`
+	Uuid           string `json:"uuid"`
 	Password       string    `json:"password"`
 	Length         int       `json:"length"`
 	HasLetter      bool      `json:"has_letter"`
@@ -30,9 +29,9 @@ type PasswordGen struct {
 	HasSpecialChar bool      `json:"has_special_char"`
 }
 
-func NewPasswordGen(uuid uuid.UUID, password string, length int, hasLetter, hasNumber, hasSpecialChar bool) *PasswordGen {
+func NewPasswordGen(uuid string, password string, length int, hasLetter, hasNumber, hasSpecialChar bool) *PasswordGen {
 	return &PasswordGen{
-		uuid:           uuid,
+		Uuid:           uuid,
 		Password:       password,
 		Length:         length,
 		HasLetter:      hasLetter,
