@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/marcos-dev88/go-password-generator/application"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
 	"github.com/marcos-dev88/go-password-generator/domain/service"
@@ -19,8 +20,20 @@ func init() {
 	}
 }
 
+var mongodbURI string = fmt.Sprintf(
+	"mongodb://%v:%v@%v",
+	os.Getenv("MONGO_INITDB_ROOT_USERNAME"),
+	os.Getenv("MONGO_INITDB_ROOT_PASSWORD"),
+	os.Getenv("MONGO_URL"),
+)
+
 func main() {
-	db := persistence.NewMongoDB("", "", "")
+	db := persistence.NewMongoDB(
+		os.Getenv("MONGO_INITDB_DATABASE"),
+		os.Getenv("MONGO_INITDB_TABLE"),
+		mongodbURI,
+	)
+
 	repo := persistence.NewRepository(db)
 
 	passwordGen := entity.NewPasswordGen(

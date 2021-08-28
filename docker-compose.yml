@@ -5,6 +5,8 @@ services:
       dockerfile: ./docker/Dockerfile
       context: .
     container_name: go-password-generator-app
+    depends_on:
+      - mongodb
     image: golang
     env_file: "./.env"
     ports:
@@ -18,9 +20,7 @@ services:
     container_name: mongodb-password-generator
     env_file: "./.env"
     ports:
-      - "28017:27017"
-    expose:
-      - 28017
+      - "27117:27017"
     networks:
       net:
         ipv4_address: 172.20.0.3
