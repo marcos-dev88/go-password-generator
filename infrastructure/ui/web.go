@@ -42,6 +42,12 @@ func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Requ
 
 	generatedPassword, err := h.app.GeneratePassword(password)
 
+	_, err = h.app.SavePasswordGen(generatedPassword)
+
+	if err != nil {
+		panic(err)
+	}
+
 	if err != nil {
 		panic(err)
 	}
