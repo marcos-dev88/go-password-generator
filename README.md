@@ -4,7 +4,7 @@ GNU Make v4.0 or later;
 docker v20.10.7 or later;
 docker-compose v1.25 or later.
 ```
-###Instructions:
+### Instructions:
 1. Rename `.env.example` file to `.env`; 
 2. Define your environments like database user and password or api port;
 3. Run application;
