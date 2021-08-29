@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-  app:
+  passgen-app:
     build:
       dockerfile: ./docker/Dockerfile
       context: .
@@ -20,7 +20,7 @@ services:
     container_name: mongodb-password-generator
     env_file: "./.env"
     ports:
-      - "27117:27017"
+      - "27018:27017"
     networks:
       net:
         ipv4_address: 172.20.0.3

@@ -1,12 +1,12 @@
 FROM golang
 
-ADD . app/src/go-api-password-generator
+ADD . passgen-app/src/go-api-password-generator
 
-COPY . app/src/go-api-password-generator
+COPY . passgen-app/src/go-api-password-generator
 
-WORKDIR app/src/go-api-password-generator
+WORKDIR passgen-app/src/go-api-password-generator
 
-ENV GOPATH=/app
+ENV GOPATH=/passgen-app
 
 RUN go build cmd/main.go
 
