@@ -46,19 +46,31 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 	switch {
 	case password.HasLetter && password.HasNumber && password.HasSpecialChar:
 		if !p.passService.CheckAllCharsQuantity(password) {
-			p.GeneratePassword(password)
+			_, err := p.GeneratePassword(password)
+			if err != nil {
+				return nil, err
+			}
 		}
 	case password.HasSpecialChar && password.HasLetter:
 		if !p.passService.CheckSpecialCharAndLettersQuantity(password) {
-			p.GeneratePassword(password)
+			_, err := p.GeneratePassword(password)
+			if err != nil {
+				return nil, err
+			}
 		}
 	case password.HasSpecialChar && password.HasNumber:
 		if !p.passService.CheckSpecialCharAndNumbersQuantity(password) {
-			p.GeneratePassword(password)
+			_, err := p.GeneratePassword(password)
+			if err != nil {
+				return nil, err
+			}
 		}
 	case password.HasLetter && password.HasNumber:
 		if !p.passService.CheckLettersAndNumbersQuantity(password) {
-			p.GeneratePassword(password)
+			_, err := p.GeneratePassword(password)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
