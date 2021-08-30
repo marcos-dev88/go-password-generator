@@ -8,7 +8,7 @@ WORKDIR passgen-app/src/go-api-password-generator
 
 ENV GOPATH=/passgen-app
 
-RUN go build cmd/main.go
+RUN go build -ldflags "-s -w" cmd/*.go
 
 ENTRYPOINT ["./main"]
 
