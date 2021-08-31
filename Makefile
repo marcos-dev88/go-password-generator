@@ -29,11 +29,11 @@ test-detail:
 test-coverage:
 	go test -cover ./...
 
-test-cover-generate-output:
+generate-test-output:
 	go test -cover ./... -coverprofile=bin/testCoverage.out
 
-test-cover-output:
+test-output:
 	go tool cover -func=bin/testCoverage.out
 
-test-cover-html:
+test-html:
 	go tool cover -html=bin/testCoverage.out
