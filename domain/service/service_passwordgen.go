@@ -174,7 +174,7 @@ func (s *service) CheckAllCharsQuantity(password *entity.PasswordGen) bool {
 
 func (s *service) CheckCharConsiderations(password entity.PasswordGen) []rune {
 
-	switch true {
+	switch {
 	case password.HasSpecialChar && password.HasLetter && password.HasNumber:
 		return entity.AllCharacters
 	case password.HasSpecialChar && password.HasLetter:
