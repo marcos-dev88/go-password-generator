@@ -19,3 +19,21 @@ down:
 
 clean-builds:
 	@rm -f bin/*
+
+test:
+	go test ./...
+
+test-detail:
+	go test ./... -v
+
+test-coverage:
+	go test -cover ./...
+
+generate-test-output:
+	go test -cover ./... -coverprofile=bin/testCoverage.out
+
+test-output:
+	go tool cover -func=bin/testCoverage.out
+
+test-html:
+	go tool cover -html=bin/testCoverage.out
