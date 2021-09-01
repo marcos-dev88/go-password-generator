@@ -29,12 +29,34 @@ var passwordMock = passwordMockTest{passwordEntityMock}
 
 // Mocking passwords with only letters, numbers or special chars
 var (
+
+	// Letters
 	passwordLettersOnlyMock8 = entity.NewPasswordGen(
 		"",
 		`LKTDLBQf`,
 		8,
 		true,
 		false,
+		false,
+	)
+
+	// Numbers
+	passwordNumbersOnlyMock32 = entity.NewPasswordGen(
+		"",
+		`58659395404719625295901915395462`,
+		32,
+		false,
+		true,
+		false,
+	)
+
+
+	passwordNumbersOnlyMock16 = entity.NewPasswordGen(
+		"",
+		`9727203247530244`,
+		16,
+		false,
+		true,
 		false,
 	)
 
@@ -47,6 +69,7 @@ var (
 		false,
 	)
 
+	// Special Char
 	passwordSpecialCharsOnlyMock8 = entity.NewPasswordGen(
 		"",
 		`,?{#}%=@`,
@@ -172,7 +195,6 @@ var (
 )
 
 // Mock consideration all false
-
 var passwordWithoutConsiderationsMock = entity.NewPasswordGen(
 	"",
 	`)i1@/b97`,

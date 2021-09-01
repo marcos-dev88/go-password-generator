@@ -238,6 +238,16 @@ func TestService_CheckSpecialCharAndLettersQuantity(t *testing.T) {
 			t.Fatalf("We expected a true value and got false")
 		}
 	})
+	
+	t.Run("Test_CheckQuantity_SpecialChar_and_Letters_32 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock32.Password) != 32 {
+			t.Fatalf("We expected an password with length 32 and we got %x", len(passwordNumbersOnlyMock32.Password))
+		}
+
+		if testService.CheckSpecialCharAndLettersQuantity(passwordNumbersOnlyMock32){
+			t.Fatalf("We expected a false value and got true")
+		}
+	})
 
 	t.Run("Test_CheckQuantity_SpecialChar_and_Letters_16", func(t *testing.T) {
 
@@ -250,6 +260,17 @@ func TestService_CheckSpecialCharAndLettersQuantity(t *testing.T) {
 		}
 	})
 
+	t.Run("Test_CheckQuantity_SpecialChar_and_Letters_16 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock16.Password) != 16 {
+			t.Fatalf("We expected an password with length 16 and we got %x", len(passwordNumbersOnlyMock16.Password))
+		}
+
+		if testService.CheckSpecialCharAndLettersQuantity(passwordNumbersOnlyMock16){
+			t.Fatalf("We expected a false value and got true")
+		}
+	})
+
+
 	t.Run("Test_CheckQuantity_SpecialChar_and_Letters_8", func(t *testing.T) {
 
 		if len(passwordLettersAndSpecialCharMock8.Password) != 8 {
@@ -258,6 +279,16 @@ func TestService_CheckSpecialCharAndLettersQuantity(t *testing.T) {
 
 		if !testService.CheckSpecialCharAndLettersQuantity(passwordLettersAndSpecialCharMock8){
 			t.Fatalf("We expected a true value and got false")
+		}
+	})
+
+	t.Run("Test_CheckQuantity_SpecialChar_and_Letters_8 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock8.Password) != 8 {
+			t.Fatalf("We expected an password with length 8 and we got %x", len(passwordNumbersOnlyMock8.Password))
+		}
+
+		if testService.CheckSpecialCharAndLettersQuantity(passwordNumbersOnlyMock8){
+			t.Fatalf("We expected a false value and got true")
 		}
 	})
 }
@@ -276,6 +307,16 @@ func TestService_CheckSpecialCharAndNumbersQuantity(t *testing.T) {
 		}
 	})
 
+	t.Run("Test_CheckQuantity_SpecialChar_and_Numbers_32 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock32.Password) != 32 {
+			t.Fatalf("We expected an password with length 32 and we got %x", len(passwordNumbersOnlyMock32.Password))
+		}
+
+		if testService.CheckSpecialCharAndNumbersQuantity(passwordNumbersOnlyMock32){
+			t.Fatalf("We expected a false value and got true")
+		}
+	})
+
 	t.Run("Test_CheckQuantity_SpecialChar_and_Numbers_16", func(t *testing.T) {
 
 		if len(passwordNumbersAndSpecialCharMock16.Password) != 16 {
@@ -287,6 +328,16 @@ func TestService_CheckSpecialCharAndNumbersQuantity(t *testing.T) {
 		}
 	})
 
+	t.Run("Test_CheckQuantity_SpecialChar_and_Numbers_16 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock16.Password) != 16 {
+			t.Fatalf("We expected an password with length 16 and we got %x", len(passwordNumbersOnlyMock16.Password))
+		}
+
+		if testService.CheckSpecialCharAndNumbersQuantity(passwordNumbersOnlyMock16){
+			t.Fatalf("We expected a false value and got true")
+		}
+	})
+
 	t.Run("Test_CheckQuantity_SpecialChar_and_Numbers_8", func(t *testing.T) {
 
 		if len(passwordNumbersAndSpecialCharMock8.Password) != 8 {
@@ -295,6 +346,16 @@ func TestService_CheckSpecialCharAndNumbersQuantity(t *testing.T) {
 
 		if !testService.CheckSpecialCharAndNumbersQuantity(passwordNumbersAndSpecialCharMock8){
 			t.Fatalf("We expected a true value and got false")
+		}
+	})
+
+	t.Run("Test_CheckQuantity_SpecialChar_and_Numbers_8 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock8.Password) != 8 {
+			t.Fatalf("We expected an password with length 8 and we got %x", len(passwordNumbersOnlyMock8.Password))
+		}
+
+		if testService.CheckSpecialCharAndNumbersQuantity(passwordNumbersOnlyMock8){
+			t.Fatalf("We expected a false value and got true")
 		}
 	})
 }
@@ -313,6 +374,16 @@ func TestService_CheckLettersAndNumbersQuantity(t *testing.T) {
 		}
 	})
 
+	t.Run("Test_CheckQuantity_Letters_and_Numbers_32 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock32.Password) != 32 {
+			t.Fatalf("We expected an password with length 32 and we got %x", len(passwordNumbersOnlyMock32.Password))
+		}
+
+		if testService.CheckLettersAndNumbersQuantity(passwordNumbersOnlyMock32){
+			t.Fatalf("We expected a false value and got true")
+		}
+	})
+
 	t.Run("Test_CheckQuantity_Letters_and_Numbers_16", func(t *testing.T) {
 
 		if len(passwordLettersAndNumbersMock16.Password) != 16 {
@@ -324,6 +395,16 @@ func TestService_CheckLettersAndNumbersQuantity(t *testing.T) {
 		}
 	})
 
+	t.Run("Test_CheckQuantity_Letters_and_Numbers_16 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock16.Password) != 16 {
+			t.Fatalf("We expected an password with length 16 and we got %x", len(passwordNumbersOnlyMock16.Password))
+		}
+
+		if testService.CheckLettersAndNumbersQuantity(passwordNumbersOnlyMock16){
+			t.Fatalf("We expected a false value and got true")
+		}
+	})
+
 	t.Run("Test_CheckQuantity_Letters_and_Numbers_8", func(t *testing.T) {
 
 		if len(passwordLettersAndNumbersMock8.Password) != 8 {
@@ -332,6 +413,16 @@ func TestService_CheckLettersAndNumbersQuantity(t *testing.T) {
 
 		if !testService.CheckLettersAndNumbersQuantity(passwordLettersAndNumbersMock8){
 			t.Fatalf("We expected a true value and got false")
+		}
+	})
+
+	t.Run("Test_CheckQuantity_Letters_and_Numbers_8 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock8.Password) != 8 {
+			t.Fatalf("We expected an password with length 16 and we got %x", len(passwordNumbersOnlyMock8.Password))
+		}
+
+		if testService.CheckLettersAndNumbersQuantity(passwordNumbersOnlyMock8){
+			t.Fatalf("We expected a false value and got true")
 		}
 	})
 }
@@ -350,6 +441,16 @@ func TestService_CheckAllCharsQuantity(t *testing.T) {
 		}
 	})
 
+	t.Run("Test_CheckQuantity_All_Characters_32 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock32.Password) != 32 {
+			t.Fatalf("We expected an password with length 32 and we got %x", len(passwordNumbersOnlyMock32.Password))
+		}
+
+		if testService.CheckAllCharsQuantity(passwordNumbersOnlyMock32){
+			t.Fatalf("We expected a false value and got true")
+		}
+	})
+
 	t.Run("Test_CheckQuantity_All_Characters_16", func(t *testing.T) {
 
 		if len(passwordAllMock16.Password) != 16 {
@@ -361,6 +462,16 @@ func TestService_CheckAllCharsQuantity(t *testing.T) {
 		}
 	})
 
+	t.Run("Test_CheckQuantity_All_Characters_16 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock16.Password) != 16 {
+			t.Fatalf("We expected an password with length 16 and we got %x", len(passwordNumbersOnlyMock16.Password))
+		}
+
+		if testService.CheckAllCharsQuantity(passwordNumbersOnlyMock16){
+			t.Fatalf("We expected a false value and got true")
+		}
+	})
+
 	t.Run("Test_CheckQuantity_All_Characters_8", func(t *testing.T) {
 
 		if len(passwordAllMock8.Password) != 8 {
@@ -369,6 +480,16 @@ func TestService_CheckAllCharsQuantity(t *testing.T) {
 
 		if !testService.CheckAllCharsQuantity(passwordAllMock8){
 			t.Fatalf("We expected a true value and got false")
+		}
+	})
+
+	t.Run("Test_CheckQuantity_All_Characters_8 - Fail", func(t *testing.T) {
+		if len(passwordNumbersOnlyMock8.Password) != 8 {
+			t.Fatalf("We expected an password with length 8 and we got %x", len(passwordNumbersOnlyMock8.Password))
+		}
+
+		if testService.CheckAllCharsQuantity(passwordNumbersOnlyMock8){
+			t.Fatalf("We expected a false value and got true")
 		}
 	})
 }
