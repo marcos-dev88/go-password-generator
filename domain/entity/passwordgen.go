@@ -20,6 +20,13 @@ var (
 	AllCharacters         = append(SpecialCharAndLetters, Numbers...)
 )
 
+var (
+	RegexNumbers = `[0-9]+`
+	RegexLetters = `[a-zA-Z]+`
+	RegexEspecialChar =`[^0-9a-zA-Z *]`
+	RegexAsterisk = `[*]`
+)
+
 type PasswordGen struct {
 	Uuid           string `json:"uuid"`
 	Password       string    `json:"password"`
@@ -41,18 +48,18 @@ func NewPasswordGen(uuid string, password string, length int, hasLetter, hasNumb
 }
 
 func (p *PasswordGen) GetPasswordNumbers(password string) []string {
-	checkNum := regexp.MustCompile(`[0-9]+`)
+	checkNum := regexp.MustCompile(RegexNumbers)
 	return checkNum.FindAllString(password, -1)
 }
 
 func (p *PasswordGen) GetPasswordLetters(password string) []string {
-	checkLetters := regexp.MustCompile(`[a-zA-Z]+`)
+	checkLetters := regexp.MustCompile(RegexLetters)
 	return checkLetters.FindAllString(password, -1)
 }
 
 func (p *PasswordGen) GetPasswordSpecialChars(password string) []string {
-	checkSpecialChar := regexp.MustCompile(`[^0-9a-zA-Z *]`)
-	addSpecialChar := regexp.MustCompile(`[*]`)
+	checkSpecialChar := regexp.MustCompile(RegexEspecialChar)
+	addSpecialChar := regexp.MustCompile(RegexAsterisk)
 
 	checkResult := checkSpecialChar.FindAllString(password, -1)
 	checkResult2 := addSpecialChar.FindAllString(password, -1)
