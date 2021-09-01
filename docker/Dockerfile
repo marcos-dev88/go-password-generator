@@ -1,15 +1,13 @@
 FROM golang
 
-ADD . passgen-app/src/go-api-password-generator
+WORKDIR /passgen-app/src/go-api-password-generator
 
-COPY . passgen-app/src/go-api-password-generator
-
-WORKDIR passgen-app/src/go-api-password-generator
+COPY . .
 
 ENV GOPATH=/passgen-app
 
-RUN go build -ldflags "-s -w" cmd/*.go
+RUN go build -ldflags "-s -w" -o bin/passgen cmd/*.go
 
-ENTRYPOINT ["./main"]
+ENTRYPOINT ["./bin/passgen"]
 
 EXPOSE 8095
