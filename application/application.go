@@ -9,7 +9,7 @@ import (
 type PasswordGeneratorApp interface {
 	GetPasswordGen(password string) (*entity.PasswordGen, error)
 	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
-	PasswordExists(entity.PasswordGen) bool
+	PasswordExists(password entity.PasswordGen) bool
 	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
 	CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool
 	CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool

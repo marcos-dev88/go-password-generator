@@ -1,14 +1,17 @@
 package persistence
 
 import (
+	"context"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 )
 
 type Repository interface {
 	GetPasswordGen(password string) (*entity.PasswordGen, error)
 	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
-	PasswordExists(entity.PasswordGen) bool
+	PasswordExists(password entity.PasswordGen) bool
 }
 
 type repository struct {
@@ -41,6 +44,29 @@ func (r *repository) SavePasswordGen(password *entity.PasswordGen) (*entity.Pass
 
 	return password, nil
 }
-func (r *repository) PasswordExists(entity.PasswordGen) bool {
+func (r *repository) PasswordExists(password entity.PasswordGen) bool {
+	_, table, cntx, err := r.mongodb.GetConn()
+
+	if err != nil {
+		panic(err)
+	}
+
+	cursor, err := table.Find(cntx, bson.M{"password": password.Password})
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(cursor *mongo.Cursor, ctx context.Context) {
+		err := cursor.Close(ctx)
+		if err != nil {
+			log.Fatalf("Error to close context -> %v", err)
+		}
+	}(cursor, cntx)
+
+	if cursor.Next(cntx)  {
+		return true
+	}
+
 	return false
 }
