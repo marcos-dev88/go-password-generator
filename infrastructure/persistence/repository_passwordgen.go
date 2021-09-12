@@ -11,7 +11,7 @@ import (
 type Repository interface {
 	GetPasswordGen(password string) (*entity.PasswordGen, error)
 	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
-	PasswordExists(password entity.PasswordGen) bool
+	PasswordExists(password string) bool
 }
 
 type repository struct {
@@ -44,14 +44,15 @@ func (r *repository) SavePasswordGen(password *entity.PasswordGen) (*entity.Pass
 
 	return password, nil
 }
-func (r *repository) PasswordExists(password entity.PasswordGen) bool {
+
+func (r *repository) PasswordExists(password string) bool {
 	_, table, cntx, err := r.mongodb.GetConn()
 
 	if err != nil {
 		panic(err)
 	}
 
-	cursor, err := table.Find(cntx, bson.M{"password": password.Password})
+	cursor, err := table.Find(cntx, bson.M{"password": password})
 
 	if err != nil {
 		panic(err)
@@ -64,7 +65,7 @@ func (r *repository) PasswordExists(password entity.PasswordGen) bool {
 		}
 	}(cursor, cntx)
 
-	if cursor.Next(cntx)  {
+	if cursor.Next(cntx) {
 		return true
 	}
 
