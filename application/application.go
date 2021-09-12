@@ -72,7 +72,6 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 				return nil, err
 			}
 		}
-
 	case p.passGenRepo.PasswordExists(password.Password):
 		_, err := p.GeneratePassword(password)
 		if err != nil {
