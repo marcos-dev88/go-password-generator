@@ -18,7 +18,7 @@ docker-compose v1.25 or later.
     }
    ```
 5. After running the project, you could make a request at this URL: `http://localhost:{YOUR_API_PORT}/password-gen/`.<br />
-OBS.: If you didn't have defined your api port the project will run at port `8095` by default.
+OBS.: If you didn't have defined your api port, the project will run at port `8095` by default.
 
 ### Run application/instalation:
 ```shell script
