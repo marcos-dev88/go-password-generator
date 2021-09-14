@@ -1,9 +1,8 @@
-create-pass:
-	build \\
-	@./bin/passgen create_password
-
 build:
 	@bash scripts/build.sh
+
+create-pass: build
+	@./bin/passgen generate -l=$(l)
 
 build-docker:
 	docker-compose up --build
