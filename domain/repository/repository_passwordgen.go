@@ -5,7 +5,7 @@ import (
 )
 
 type Repository interface {
-	GetPasswordGen(password string) (*entity.PasswordGen, error)
+	GetLastTenPasswords() ([]*entity.PasswordGen, error)
 	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
 	PasswordExists(password string) bool
 }
