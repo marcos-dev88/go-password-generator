@@ -8,6 +8,8 @@ ENV GOPATH=/passgen-app
 
 RUN go build -ldflags "-s -w" -o bin/passgen cmd/*.go
 
+RUN @./bin/passgen server
+
 ENTRYPOINT ["./bin/passgen"]
 
 EXPOSE 8095
