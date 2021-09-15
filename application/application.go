@@ -9,7 +9,7 @@ import (
 type PasswordGeneratorApp interface {
 	GetLastTenPasswords() ([]*entity.PasswordGen, error)
 	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
-	PasswordExists(password string) bool
+	PasswordExists(password string) (bool, error)
 	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
 	CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool
 	CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool
@@ -37,6 +37,15 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 	generatedPass, err := p.passService.GeneratePasswordByLength(password.Length, passwordChars)
 
 	password.Password = generatedPass
+
+	passExists, errExists := p.passGenRepo.PasswordExists(password.Password)
+
+	if errExists == nil && passExists {
+		_, err := p.GeneratePassword(password)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	if err != nil {
 		return nil, err
@@ -72,11 +81,6 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 				return nil, err
 			}
 		}
-	case p.passGenRepo.PasswordExists(password.Password):
-		_, err := p.GeneratePassword(password)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return password, nil
@@ -90,7 +94,7 @@ func (p *passwordGeneratorApp) SavePasswordGen(password *entity.PasswordGen) (*e
 	return p.passGenRepo.SavePasswordGen(password)
 }
 
-func (p *passwordGeneratorApp) PasswordExists(password string) bool {
+func (p *passwordGeneratorApp) PasswordExists(password string) (bool, error) {
 	return p.passGenRepo.PasswordExists(password)
 }
 

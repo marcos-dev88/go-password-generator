@@ -12,7 +12,7 @@ import (
 type Repository interface {
 	GetLastTenPasswords() ([]*entity.PasswordGen, error)
 	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
-	PasswordExists(password string) bool
+	PasswordExists(password string) (bool, error)
 }
 
 type repository struct {
@@ -94,17 +94,17 @@ func (r *repository) SavePasswordGen(password *entity.PasswordGen) (*entity.Pass
 	return password, nil
 }
 
-func (r *repository) PasswordExists(password string) bool {
+func (r *repository) PasswordExists(password string) (bool, error) {
 	_, table, cntx, err := r.mongodb.GetConn()
 
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	cursor, err := table.Find(cntx, bson.M{"password": password})
 
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	defer func(cursor *mongo.Cursor, ctx context.Context) {
@@ -115,8 +115,8 @@ func (r *repository) PasswordExists(password string) bool {
 	}(cursor, cntx)
 
 	if cursor.Next(cntx) {
-		return true
+		return true, nil
 	}
 
-	return false
+	return false, nil
 }

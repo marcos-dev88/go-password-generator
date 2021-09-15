@@ -49,6 +49,9 @@ func main() {
 
 	app := application.NewApplication(repo, servicePass)
 
+	cli := ui.NewCli(app)
+	cli.GeneratePassword()
+
 	handler := ui.NewHandler(app)
 
 	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
