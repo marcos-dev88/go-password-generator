@@ -9,6 +9,7 @@ import (
 
 type Service interface {
 	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
+	GenerateRandomPassword() <-chan string
 	CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool
 	CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool
 	CheckLettersAndNumbersQuantity(password *entity.PasswordGen) bool
@@ -22,6 +23,46 @@ type service struct {
 
 func NewService(passGen entity.PasswordGenerator) *service {
 	return &service{passGen: passGen}
+}
+
+func (s *service) GenerateRandomPassword() <-chan string {
+	rand.Seed(time.Now().UTC().UnixNano())
+	ch := make(chan string)
+
+	random := func(min, max int) int {
+		return min + rand.Intn(max-min)
+	}
+
+	generatedRandom := random(1, 10)
+
+	for i := 0; i < generatedRandom; i++ {
+		go func() {
+			pass, err := s.GeneratePasswordByLength(32, entity.AllCharacters)
+			if err != nil {
+				panic(err)
+			}
+			ch <- pass
+		}()
+	}
+
+	go func() {
+		for {
+			select {
+			case generatedPassword := <-ch:
+				ch <- generatedPassword
+			case generatedPassword2 := <-ch:
+				ch <- generatedPassword2
+			case generatedPassword3 := <-ch:
+				ch <- generatedPassword3
+			case generatedPassword4 := <-ch:
+				ch <- generatedPassword4
+			case generatedPassword5 := <-ch:
+				ch <- generatedPassword5
+			}
+		}
+	}()
+
+	return ch
 }
 
 func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (string, error) {

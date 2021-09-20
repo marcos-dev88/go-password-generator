@@ -1,6 +1,7 @@
 package service
 
 import (
+	"log"
 	"reflect"
 	"regexp"
 	"testing"
@@ -222,6 +223,14 @@ func TestService_GeneratePasswordByLength(t *testing.T) {
 		if err == nil {
 			t.Fatalf("We expected an error here")
 		}
+	})
+}
+
+func TestService_GenerateRandomPassword(t *testing.T) {
+	testService := NewService(passwordEntityMock)
+
+	t.Run("Test_RandomPassword", func(t *testing.T) {
+		log.Printf("generatedPassword -> \n%v", <-testService.GenerateRandomPassword())
 	})
 }
 
