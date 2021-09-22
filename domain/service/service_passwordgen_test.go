@@ -230,7 +230,7 @@ func TestService_GenerateRandomPassword(t *testing.T) {
 	testService := NewService(passwordEntityMock)
 
 	t.Run("Test_RandomPassword", func(t *testing.T) {
-		log.Printf("generatedPassword -> \n%v", <-testService.GenerateRandomPassword())
+		log.Printf("generatedPassword -> \n%v", testService.GenerateRandomPassword())
 	})
 }
 
