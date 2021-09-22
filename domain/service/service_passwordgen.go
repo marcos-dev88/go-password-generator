@@ -58,6 +58,18 @@ func (s *service) GenerateRandomPassword() string {
 		close(inputCh)
 	}()
 
+	// Checking the duplicated passwords and removing them
+	removeDuplicatedPasswords := func(inputChan chan string, outputChan chan string) {
+		var previousPassword string
+		for actualPassword := range inputChan {
+			if actualPassword != previousPassword {
+				previousPassword = actualPassword
+				outputChan <- actualPassword
+			}
+		}
+		close(outputChan)
+	}
+
 	getPasswords := func(outputChan <-chan string, newWg *sync.WaitGroup) {
 		defer newWg.Done()
 
@@ -78,22 +90,8 @@ func (s *service) GenerateRandomPassword() string {
 		}()
 	}
 
-	// Checking the duplicated passwords and removing them
-	removeDuplicatedPasswords := func(inputChan chan string, outputChan chan string) {
-		var previousPassword string
-		for actualPassword := range inputChan {
-			if actualPassword != previousPassword {
-				previousPassword = actualPassword
-				outputChan <- actualPassword
-			}
-		}
-		close(outputChan)
-	}
-
-	go getPasswords(outputCh, &wg)
-
 	go removeDuplicatedPasswords(inputCh, outputCh)
-
+	go getPasswords(outputCh, &wg)
 	go sendPasswordsToChan(ch, &wg)
 
 	select {
