@@ -44,6 +44,20 @@ func (s *service) GenerateRandomPassword() string {
 		return min + rand.Intn(max-min)
 	}
 
+	// Generating a random number one to fifteen
+	generatedRandom := random(1, 15)
+
+	go func() {
+		for i := 0; i < generatedRandom; i++ {
+			pass, err := s.GeneratePasswordByLength(32, entity.AllCharacters)
+			if err != nil {
+				panic(err)
+			}
+			inputCh <- pass
+		}
+		close(inputCh)
+	}()
+
 	getPasswords := func(outputChan <-chan string, newWg *sync.WaitGroup) {
 		defer newWg.Done()
 
@@ -81,20 +95,6 @@ func (s *service) GenerateRandomPassword() string {
 	go removeDuplicatedPasswords(inputCh, outputCh)
 
 	go sendPasswordsToChan(ch, &wg)
-
-	// Generating a random number one to fifteen
-	generatedRandom := random(1, 15)
-
-	go func() {
-		for i := 0; i < generatedRandom; i++ {
-			pass, err := s.GeneratePasswordByLength(32, entity.AllCharacters)
-			if err != nil {
-				panic(err)
-			}
-			inputCh <- pass
-		}
-		close(inputCh)
-	}()
 
 	select {
 	case generatedPassword := <-ch:
