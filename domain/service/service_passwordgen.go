@@ -28,13 +28,14 @@ func NewService(passGen entity.PasswordGenerator) *service {
 
 func (s *service) GenerateRandomPassword() string {
 	rand.Seed(time.Now().UTC().UnixNano())
+	passwordListChannel := make(chan []string)
 	var passwordList []string
 	inputCh := make(chan string, 3)
 	outputCh := make(chan string, 3)
 	ch := make(chan string, 3)
 	wg := sync.WaitGroup{}
 
-	wg.Add(1)
+	wg.Add(2)
 
 	defer wg.Wait()
 
@@ -43,12 +44,24 @@ func (s *service) GenerateRandomPassword() string {
 		return min + rand.Intn(max-min)
 	}
 
-	getPasswords := func(outputChan <-chan string, newWg *sync.WaitGroup) []string {
+	getPasswords := func(outputChan <-chan string, newWg *sync.WaitGroup) {
 		defer newWg.Done()
+
 		for v := range outputCh {
 			passwordList = append(passwordList, v)
 		}
-		return passwordList
+		passwordListChannel <- passwordList
+	}
+
+	// Send passwords to channel
+	sendPasswordsToChan := func(receiveCh chan string, newWg *sync.WaitGroup) {
+		defer newWg.Done()
+		go func() {
+			for _, v := range <-passwordListChannel {
+				receiveCh <- v
+			}
+			close(receiveCh)
+		}()
 	}
 
 	// Checking the duplicated passwords and removing them
@@ -67,6 +80,8 @@ func (s *service) GenerateRandomPassword() string {
 
 	go removeDuplicatedPasswords(inputCh, outputCh)
 
+	go sendPasswordsToChan(ch, &wg)
+
 	// Generating a random number one to fifteen
 	generatedRandom := random(1, 15)
 
@@ -81,30 +96,22 @@ func (s *service) GenerateRandomPassword() string {
 		close(inputCh)
 	}()
 
-	go func() {
-		for {
-			select {
-			case generatedPassword := <-outputCh:
-				ch <- generatedPassword
-			case generatedPassword2 := <-outputCh:
-				ch <- generatedPassword2
-			case generatedPassword3 := <-outputCh:
-				ch <- generatedPassword3
-			case generatedPassword4 := <-outputCh:
-				ch <- generatedPassword4
-			case generatedPassword5 := <-outputCh:
-				ch <- generatedPassword5
-			}
+	for {
+		select {
+		case generatedPassword := <-ch:
+			return generatedPassword
+		case generatedPassword2 := <-ch:
+			return generatedPassword2
+		case generatedPassword3 := <-ch:
+			return generatedPassword3
+		case generatedPassword4 := <-ch:
+			return generatedPassword4
+		case generatedPassword5 := <-ch:
+			return generatedPassword5
+		default:
+			return ""
 		}
-		//close(ch)
-	}()
-
-	// Saving return of output in a var to close ch
-	returnCh :=  <-ch
-
-	//close(ch)
-
-	return returnCh
+	}
 }
 
 func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (string, error) {
