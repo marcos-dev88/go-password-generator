@@ -96,21 +96,17 @@ func (s *service) GenerateRandomPassword() string {
 		close(inputCh)
 	}()
 
-	for {
-		select {
-		case generatedPassword := <-ch:
-			return generatedPassword
-		case generatedPassword2 := <-ch:
-			return generatedPassword2
-		case generatedPassword3 := <-ch:
-			return generatedPassword3
-		case generatedPassword4 := <-ch:
-			return generatedPassword4
-		case generatedPassword5 := <-ch:
-			return generatedPassword5
-		default:
-			return ""
-		}
+	select {
+	case generatedPassword := <-ch:
+		return generatedPassword
+	case generatedPassword2 := <-ch:
+		return generatedPassword2
+	case generatedPassword3 := <-ch:
+		return generatedPassword3
+	case generatedPassword4 := <-ch:
+		return generatedPassword4
+	case generatedPassword5 := <-ch:
+		return generatedPassword5
 	}
 }
 
