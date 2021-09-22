@@ -8,7 +8,7 @@ import (
 
 type PasswordGeneratorApp interface {
 	GetLastTenPasswords() ([]*entity.PasswordGen, error)
-	GenerateRandomPassword() <-chan string
+	GenerateRandomPassword() string
 	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
 	PasswordExists(password string) (bool, error)
 	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
@@ -87,7 +87,7 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 	return password, nil
 }
 
-func (p *passwordGeneratorApp)  GenerateRandomPassword() <-chan string{
+func (p *passwordGeneratorApp) GenerateRandomPassword() string {
 	return p.passService.GenerateRandomPassword()
 }
 

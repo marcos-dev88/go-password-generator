@@ -40,7 +40,7 @@ func (c *cliGeneratePassword) GeneratePassword() {
 
 		generatedStrongPass := c.app.GenerateRandomPassword()
 
-		log.Printf("generated strong password: \n\n\t%v", <-generatedStrongPass)
+		log.Printf("generated strong password: \n\n\t%v", generatedStrongPass)
 		fmt.Println("")
 		os.Exit(0)
 
