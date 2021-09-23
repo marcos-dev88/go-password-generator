@@ -27,10 +27,23 @@ func (c *cliGeneratePassword) GeneratePassword() {
 		log.Fatal("error: input not valid, you must use: generate or server")
 	}
 
+	strongPass := flag.NewFlagSet("genstrong", flag.ExitOnError)
 	generate := flag.NewFlagSet("generate", flag.ExitOnError)
 	passLength := generate.Int("l", 0, "inform the length of your password")
 
 	switch os.Args[1] {
+	case "genstrong":
+		if err := strongPass.Parse(os.Args[2:]); err != nil {
+			log.Printf("error: %v", err)
+			os.Exit(1)
+		}
+
+		generatedStrongPass := c.app.GenerateRandomPassword()
+
+		log.Printf("generated strong password: \n\n\t%v", generatedStrongPass)
+		fmt.Println("")
+		os.Exit(0)
+
 	case "generate":
 		if err := generate.Parse(os.Args[2:]); err != nil {
 			log.Printf("error: %v", err)

@@ -4,6 +4,9 @@ build:
 create-pass: build
 	@./bin/passgen generate -l=$(l)
 
+strong-password: build
+	@./bin/passgen genstrong
+
 build-docker:
 	docker-compose up --build
 
