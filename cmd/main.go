@@ -22,15 +22,15 @@ func init() {
 
 var mongodbURI string = fmt.Sprintf(
 	"mongodb://%v:%v@%v",
-	os.Getenv("MONGO_INITDB_ROOT_USERNAME"),
-	os.Getenv("MONGO_INITDB_ROOT_PASSWORD"),
+	os.Getenv("MONGO_USERNAME"),
+	os.Getenv("MONGO_PASSWORD"),
 	os.Getenv("MONGO_URL"),
 )
 
 func main() {
 	db := persistence.NewMongoDB(
-		os.Getenv("MONGO_INITDB_DATABASE"),
-		os.Getenv("MONGO_INITDB_TABLE"),
+		os.Getenv("MONGO_DB"),
+		os.Getenv("MONGO_TABLE"),
 		mongodbURI,
 	)
 
@@ -48,6 +48,9 @@ func main() {
 	servicePass := service.NewService(passwordGen)
 
 	app := application.NewApplication(repo, servicePass)
+
+	cli := ui.NewCli(app)
+	cli.GeneratePassword()
 
 	handler := ui.NewHandler(app)
 

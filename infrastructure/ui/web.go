@@ -22,8 +22,11 @@ func NewHandler(app application.PasswordGeneratorApp) *handler {
 }
 
 func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Request){
+
 	if req.Method != "POST" {
-		log.Println("Method not allowed")
+		log.Printf("method not allowed")
+		http.Error(rw, "error: method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
 
 	decoder := json.NewDecoder(req.Body)

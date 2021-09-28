@@ -19,8 +19,11 @@ services:
     image: mongo
     container_name: mongodb-password-generator
     env_file: "./.env"
+    volumes:
+      - ./scripts/mongo/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
     ports:
       - "27018:27017"
+    command: --auth
     networks:
       net:
         ipv4_address: 172.20.0.3

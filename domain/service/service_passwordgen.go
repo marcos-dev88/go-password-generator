@@ -4,11 +4,13 @@ import (
 	"errors"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
 	"math/rand"
+	"sync"
 	"time"
 )
 
 type Service interface {
 	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
+	GenerateRandomPassword() string
 	CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool
 	CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool
 	CheckLettersAndNumbersQuantity(password *entity.PasswordGen) bool
@@ -22,6 +24,88 @@ type service struct {
 
 func NewService(passGen entity.PasswordGenerator) *service {
 	return &service{passGen: passGen}
+}
+
+func (s *service) GenerateRandomPassword() string {
+	rand.Seed(time.Now().UTC().UnixNano())
+	passwordListChannel := make(chan []string)
+	var passwordList []string
+	inputCh := make(chan string, 3)
+	outputCh := make(chan string, 3)
+	ch := make(chan string, 3)
+	wg := sync.WaitGroup{}
+
+	wg.Add(2)
+
+	defer wg.Wait()
+
+	// Generates a random number
+	random := func(min, max int) int {
+		return min + rand.Intn(max-min)
+	}
+
+	// Generating a random number one to fifteen
+	generatedRandom := random(1, 15)
+
+	go func() {
+		for i := 0; i < generatedRandom; i++ {
+			pass, err := s.GeneratePasswordByLength(32, entity.AllCharacters)
+			if err != nil {
+				panic(err)
+			}
+			inputCh <- pass
+		}
+		close(inputCh)
+	}()
+
+	// Checking the duplicated passwords and removing them
+	removeDuplicatedPasswords := func(inputChan chan string, outputChan chan string) {
+		var previousPassword string
+		for actualPassword := range inputChan {
+			if actualPassword != previousPassword {
+				previousPassword = actualPassword
+				outputChan <- actualPassword
+			}
+		}
+		close(outputChan)
+	}
+
+	getPasswords := func(outputChan <-chan string, newWg *sync.WaitGroup) {
+		defer newWg.Done()
+
+		for v := range outputCh {
+			passwordList = append(passwordList, v)
+		}
+		passwordListChannel <- passwordList
+	}
+
+	// Send passwords to channel
+	sendPasswordsToChan := func(receiveCh chan string, newWg *sync.WaitGroup) {
+		defer newWg.Done()
+		go func() {
+			for _, v := range <-passwordListChannel {
+				receiveCh <- v
+			}
+			close(receiveCh)
+		}()
+	}
+
+	go removeDuplicatedPasswords(inputCh, outputCh)
+	go getPasswords(outputCh, &wg)
+	go sendPasswordsToChan(ch, &wg)
+
+	select {
+	case generatedPassword := <-ch:
+		return generatedPassword
+	case generatedPassword2 := <-ch:
+		return generatedPassword2
+	case generatedPassword3 := <-ch:
+		return generatedPassword3
+	case generatedPassword4 := <-ch:
+		return generatedPassword4
+	case generatedPassword5 := <-ch:
+		return generatedPassword5
+	}
 }
 
 func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (string, error) {
