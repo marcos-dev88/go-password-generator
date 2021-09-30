@@ -72,10 +72,6 @@ func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (s
 		close(inCH)
 	}()
 
-	if err := g.Wait(); err != nil {
-		return "", err
-	}
-
 	// Checking the duplicated passwords and removing them
 	removeDuplicatedPasswords := func(inputChan chan string, outputChan chan string) {
 		var previousPassword string
