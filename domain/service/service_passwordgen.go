@@ -10,7 +10,6 @@ import (
 
 type Service interface {
 	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
-	GenerateRandomPassword() string
 	CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool
 	CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool
 	CheckLettersAndNumbersQuantity(password *entity.PasswordGen) bool
@@ -26,18 +25,34 @@ func NewService(passGen entity.PasswordGenerator) *service {
 	return &service{passGen: passGen}
 }
 
-func (s *service) GenerateRandomPassword() string {
-	rand.Seed(time.Now().UTC().UnixNano())
+func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (string, error) {
+	rand.Seed(time.Now().UnixNano())
+	randomCharArray := make([]rune, length)
+
 	passwordListChannel := make(chan []string)
 	var passwordList []string
-	inputCh := make(chan string, 3)
-	outputCh := make(chan string, 3)
-	ch := make(chan string, 3)
+
+	inCH := make(chan string, 3)
+	outCH := make(chan string, 3)
+	returnCH := make(chan string, 3)
+
 	wg := sync.WaitGroup{}
-
 	wg.Add(2)
-
 	defer wg.Wait()
+
+	// This var receives a function that gets the password's condition and generates them
+	passGenerator := func(passwordLength int, passwordCharacters []rune) (string, error){
+		for i := 0; i < len(randomCharArray); i++ {
+			randomCharArray[i] = passCharacters[rand.Int63n(int64(len(passCharacters)))]
+		}
+
+		// TODO: Improve this test, checking an way to handler errors in goroutines
+		if len(string(randomCharArray)) == 0 {
+			return "", errors.New("password is empty")
+		}
+
+		return string(randomCharArray), nil
+	}
 
 	// Generates a random number
 	random := func(min, max int) int {
@@ -49,14 +64,17 @@ func (s *service) GenerateRandomPassword() string {
 
 	go func() {
 		for i := 0; i < generatedRandom; i++ {
-			pass, err := s.GeneratePasswordByLength(32, entity.AllCharacters)
+			pass, err := passGenerator(length, passCharacters)
 			if err != nil {
-				panic(err)
 			}
-			inputCh <- pass
+			inCH <- pass
 		}
-		close(inputCh)
+		close(inCH)
 	}()
+
+	if err := g.Wait(); err != nil {
+		return "", err
+	}
 
 	// Checking the duplicated passwords and removing them
 	removeDuplicatedPasswords := func(inputChan chan string, outputChan chan string) {
@@ -73,7 +91,7 @@ func (s *service) GenerateRandomPassword() string {
 	getPasswords := func(outputChan <-chan string, newWg *sync.WaitGroup) {
 		defer newWg.Done()
 
-		for v := range outputCh {
+		for v := range outCH {
 			passwordList = append(passwordList, v)
 		}
 		passwordListChannel <- passwordList
@@ -90,38 +108,22 @@ func (s *service) GenerateRandomPassword() string {
 		}()
 	}
 
-	go removeDuplicatedPasswords(inputCh, outputCh)
-	go getPasswords(outputCh, &wg)
-	go sendPasswordsToChan(ch, &wg)
+	go removeDuplicatedPasswords(inCH, outCH)
+	go getPasswords(outCH, &wg)
+	go sendPasswordsToChan(returnCH, &wg)
 
 	select {
-	case generatedPassword := <-ch:
-		return generatedPassword
-	case generatedPassword2 := <-ch:
-		return generatedPassword2
-	case generatedPassword3 := <-ch:
-		return generatedPassword3
-	case generatedPassword4 := <-ch:
-		return generatedPassword4
-	case generatedPassword5 := <-ch:
-		return generatedPassword5
+	case generatedPassword := <-returnCH:
+		return generatedPassword, nil
+	case generatedPassword2 := <-returnCH:
+		return generatedPassword2, nil
+	case generatedPassword3 := <-returnCH:
+		return generatedPassword3, nil
+	case generatedPassword4 := <-returnCH:
+		return generatedPassword4, nil
+	case generatedPassword5 := <-returnCH:
+		return generatedPassword5, nil
 	}
-}
-
-func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (string, error) {
-	rand.Seed(time.Now().UnixNano())
-
-	randomCharArray := make([]rune, length)
-
-	for i := 0; i < len(randomCharArray); i++ {
-		randomCharArray[i] = passCharacters[rand.Int63n(int64(len(passCharacters)))]
-	}
-
-	if len(string(randomCharArray)) == 0 {
-		return "", errors.New("password is empty")
-	}
-
-	return string(randomCharArray), nil
 }
 
 func (s *service) CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool {

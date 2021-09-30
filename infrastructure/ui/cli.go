@@ -38,7 +38,7 @@ func (c *cliGeneratePassword) GeneratePassword() {
 			os.Exit(1)
 		}
 
-		generatedStrongPass := c.app.GenerateRandomPassword()
+		generatedStrongPass, _ := c.app.GeneratePasswordByLength(64, entity.AllCharacters)
 
 		log.Printf("generated strong password: \n\n\t%v", generatedStrongPass)
 		fmt.Println("")
