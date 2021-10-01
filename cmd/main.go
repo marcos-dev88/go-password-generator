@@ -53,9 +53,10 @@ func main() {
 	cli.GeneratePassword()
 
 	handler := ui.NewHandler(app)
+	middleware := ui.NewMiddleware()
 
 	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
-	http.HandleFunc("/password-gen/", handler.HandlePasswordGenerator)
+	http.HandleFunc("/password-gen/", middleware.Auth(handler.HandlePasswordGenerator))
 	log.Fatal(http.ListenAndServe(os.Getenv("API_PORT"), nil))
 
 }
