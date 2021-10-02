@@ -57,7 +57,7 @@ func main() {
 	middleware := ui.NewMiddleware()
 
 	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
-	router.HandleFunc("/password-gen/", middleware.Auth(middleware.EnablingCORS(handler.HandlePasswordGenerator)))
+	router.HandleFunc("/password-gen/", middleware.EnablingCORS(middleware.Auth(handler.HandlePasswordGenerator)))
 	log.Fatal(http.ListenAndServe(os.Getenv("API_PORT"), router))
 
 }
