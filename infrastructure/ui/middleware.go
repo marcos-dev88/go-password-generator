@@ -48,8 +48,6 @@ func (m *middleware) EnablingCORS(handler http.HandlerFunc) http.HandlerFunc {
 			rw.Write(returnMessage)
 			return
 		}
-
-		rw.WriteHeader(http.StatusOK)
 		handler.ServeHTTP(rw, req)
 	}
 }
