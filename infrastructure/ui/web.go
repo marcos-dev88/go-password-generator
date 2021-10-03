@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/marcos-dev88/go-password-generator/application"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
+	"github.com/marcos-dev88/go-password-generator/infrastructure/http_response"
 	"net/http"
 )
 
@@ -14,10 +15,11 @@ type Handler interface {
 
 type handler struct {
 	app application.PasswordGeneratorApp
+	jsonresp http_response.ResponseHTTP
 }
 
-func NewHandler(app application.PasswordGeneratorApp) *handler {
-	return &handler{app: app}
+func NewHandler(app application.PasswordGeneratorApp, jsonresp http_response.ResponseHTTP) *handler {
+	return &handler{app: app, jsonresp: jsonresp}
 }
 
 func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Request){
@@ -38,19 +40,11 @@ func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Requ
 
 	generatedPassword, err := h.app.GeneratePassword(password)
 
-	_, err = h.app.SavePasswordGen(generatedPassword)
-
 	if err != nil {
 		panic(err)
 	}
 
-	if err != nil {
-		panic(err)
-	}
-
-	response, _ := json.Marshal(&generatedPassword)
-
-	rw.Write(response)
+	h.jsonresp.ResponseJSON(rw, http_response.NewResponseHTTP(http.StatusOK, generatedPassword))
 }
 
 
