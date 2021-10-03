@@ -4,8 +4,11 @@ build:
 create-pass: build
 	@./bin/passgen generate -l=$(l)
 
-strong-password: build
-	@./bin/passgen genstrong
+strong-password:
+	docker build -t go-passtrong ./docker
+	docker run go-passtrong:latest
+	@docker rmi -f go-passtrong >/dev/null 2>&1
+	@docker rm $$(docker ps -a -f status=exited -q) -f >/dev/null 2>&1
 
 build-docker:
 	docker-compose up --build

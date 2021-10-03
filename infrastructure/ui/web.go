@@ -5,7 +5,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/marcos-dev88/go-password-generator/application"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
-	"log"
 	"net/http"
 )
 
@@ -22,12 +21,6 @@ func NewHandler(app application.PasswordGeneratorApp) *handler {
 }
 
 func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Request){
-
-	if req.Method != "POST" {
-		log.Printf("method not allowed")
-		http.Error(rw, "error: method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
 
 	decoder := json.NewDecoder(req.Body)
 
@@ -57,8 +50,6 @@ func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Requ
 
 	response, _ := json.Marshal(&generatedPassword)
 
-	rw.Header().Set("Content-Type","application-json")
-	rw.WriteHeader(http.StatusOK)
 	rw.Write(response)
 }
 

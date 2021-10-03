@@ -52,11 +52,13 @@ func main() {
 	cli := ui.NewCli(app)
 	cli.GeneratePassword()
 
+	router := http.NewServeMux()
 	handler := ui.NewHandler(app)
+	middleware := ui.NewMiddleware()
 
 	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
-	http.HandleFunc("/password-gen/", handler.HandlePasswordGenerator)
-	log.Fatal(http.ListenAndServe(os.Getenv("API_PORT"), nil))
+	router.HandleFunc("/password-gen/", middleware.EnablingCORS(middleware.Auth(handler.HandlePasswordGenerator)))
+	log.Fatal(http.ListenAndServe(os.Getenv("API_PORT"), router))
 
 }
 
