@@ -50,12 +50,13 @@ func main() {
 
 	app := application.NewApplication(repo, servicePass)
 	jsonResponse := http_response.NewResponseHTTP(0, "")
+	jsonError := http_response.NewCustomError(0, "")
 
 	cli := ui.NewCli(app)
 	cli.GeneratePassword()
 
 	router := http.NewServeMux()
-	handler := ui.NewHandler(app, jsonResponse)
+	handler := ui.NewHandler(app, jsonResponse, jsonError)
 	middleware := ui.NewMiddleware()
 
 	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
