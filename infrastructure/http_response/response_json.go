@@ -19,7 +19,7 @@ func NewResponseHTTP(statusCode int, payload interface{}) *responseHttp {
 	return &responseHttp{StatusCode: statusCode, Payload: payload}
 }
 
-func (rh *responseHttp) ResponseJSON(rw http.ResponseWriter, resp *responseHttp){
+func (rh *responseHttp) ResponseJSON(rw http.ResponseWriter, resp *responseHttp) {
 
 	response, err := json.Marshal(&resp.Payload)
 

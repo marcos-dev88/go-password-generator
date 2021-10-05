@@ -16,11 +16,10 @@ type Handler interface {
 type handler struct {
 	app application.PasswordGeneratorApp
 	json_resp http_response.ResponseHTTP
-	json_err http_response.CustomError
 }
 
-func NewHandler(app application.PasswordGeneratorApp, json_resp http_response.ResponseHTTP, json_err http_response.CustomError) *handler {
-	return &handler{app: app, json_resp: json_resp, json_err: json_err}
+func NewHandler(app application.PasswordGeneratorApp, json_resp http_response.ResponseHTTP) *handler {
+	return &handler{app: app, json_resp: json_resp}
 }
 
 func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Request){
@@ -53,7 +52,6 @@ func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Requ
 
 func (h *handler) defaultErrorResponse(rw http.ResponseWriter, err error) {
 	newErr := http_response.NewCustomError(http.StatusInternalServerError, err.Error())
-	h.json_err.DefaultLogResponse()
 	h.json_resp.ErrorJSON(rw, *newErr)
 }
 

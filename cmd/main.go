@@ -49,15 +49,15 @@ func main() {
 	servicePass := service.NewService(passwordGen)
 
 	app := application.NewApplication(repo, servicePass)
+	customErr := http_response.NewCustomError(0, "")
 	jsonResponse := http_response.NewResponseHTTP(0, "")
-	jsonError := http_response.NewCustomError(0, "")
 
 	cli := ui.NewCli(app)
 	cli.GeneratePassword()
 
 	router := http.NewServeMux()
-	handler := ui.NewHandler(app, jsonResponse, jsonError)
-	middleware := ui.NewMiddleware()
+	handler := ui.NewHandler(app, jsonResponse, customErr)
+	middleware := ui.NewMiddleware(jsonResponse)
 
 	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
 	router.HandleFunc("/password-gen/", middleware.EnablingCORS(middleware.Auth(handler.HandlePasswordGenerator)))

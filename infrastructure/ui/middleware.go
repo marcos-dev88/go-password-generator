@@ -1,8 +1,7 @@
 package ui
 
 import (
-	"encoding/json"
-	"log"
+	"github.com/marcos-dev88/go-password-generator/infrastructure/http_response"
 	"net/http"
 	"os"
 )
@@ -12,10 +11,12 @@ type Middleware interface {
 	EnablingCORS(handler http.HandlerFunc) http.HandlerFunc
 }
 
-type middleware struct{}
+type middleware struct{
+	json_resp http_response.ResponseHTTP
+}
 
-func NewMiddleware() *middleware {
-	return &middleware{}
+func NewMiddleware(json_resp http_response.ResponseHTTP) *middleware {
+	return &middleware{json_resp: json_resp}
 }
 
 func (m *middleware) Auth(handler http.HandlerFunc) http.HandlerFunc {
@@ -23,9 +24,7 @@ func (m *middleware) Auth(handler http.HandlerFunc) http.HandlerFunc {
 
 		apiKey := req.Header.Get("api-token")
 		if apiKey != os.Getenv("API_KEY") {
-			returnMessage, _ := json.Marshal(map[string]string{"error": "api-key is missing or it isn't correct"})
-			rw.WriteHeader(http.StatusBadRequest)
-			rw.Write(returnMessage)
+			m.json_resp.ErrorJSON(rw, *http_response.NewCustomError(http.StatusUnauthorized, "api-key is missing or it isn't correct"))
 			return
 		}
 		handler.ServeHTTP(rw, req)
@@ -42,10 +41,7 @@ func (m *middleware) EnablingCORS(handler http.HandlerFunc) http.HandlerFunc {
 		rw.Header().Set("Content-Type", "application-json")
 
 		if req.Method != "POST" {
-			log.Printf("method not allowed")
-			returnMessage, _ := json.Marshal(map[string]string{"error": "method not allowed"})
-			rw.WriteHeader(http.StatusMethodNotAllowed)
-			rw.Write(returnMessage)
+			m.json_resp.ErrorJSON(rw, *http_response.NewCustomError(http.StatusMethodNotAllowed, "method not allowed"))
 			return
 		}
 		handler.ServeHTTP(rw, req)
