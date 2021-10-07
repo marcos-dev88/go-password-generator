@@ -49,14 +49,13 @@ func main() {
 	servicePass := service.NewService(passwordGen)
 
 	app := application.NewApplication(repo, servicePass)
-	customErr := http_response.NewCustomError(0, "")
 	jsonResponse := http_response.NewResponseHTTP(0, "")
 
 	cli := ui.NewCli(app)
 	cli.GeneratePassword()
 
 	router := http.NewServeMux()
-	handler := ui.NewHandler(app, jsonResponse, customErr)
+	handler := ui.NewHandler(app, jsonResponse)
 	middleware := ui.NewMiddleware(jsonResponse)
 
 	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
