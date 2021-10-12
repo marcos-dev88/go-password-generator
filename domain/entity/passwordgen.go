@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"regexp"
 )
@@ -66,8 +65,6 @@ func (p *PasswordGen) Validate(body []byte) error {
 	if err := json.Unmarshal(body, &expectedBody); err != nil {
 		return err
 	}
-
-	log.Printf("value -> %v", expectedBody)
 
 	if expectedBody["length"] == 0 {
 		return errors.New("error: expected a json key 'length' with a value: 8, 16, 32 or 64")
