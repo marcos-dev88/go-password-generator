@@ -6,6 +6,7 @@ import (
 	"github.com/marcos-dev88/go-password-generator/application"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
 	"github.com/marcos-dev88/go-password-generator/domain/service"
+	"github.com/marcos-dev88/go-password-generator/infrastructure/http_response"
 	"github.com/marcos-dev88/go-password-generator/infrastructure/persistence"
 	"github.com/marcos-dev88/go-password-generator/infrastructure/ui"
 	"log"
@@ -47,16 +48,19 @@ func main() {
 
 	servicePass := service.NewService(passwordGen)
 
-	app := application.NewApplication(repo, servicePass)
+	app := application.NewApplication(passwordGen, repo, servicePass)
+	jsonResponse := http_response.NewResponseHTTP(0, "")
 
 	cli := ui.NewCli(app)
 	cli.GeneratePassword()
 
-	handler := ui.NewHandler(app)
+	router := http.NewServeMux()
+	handler := ui.NewHandler(app, jsonResponse)
+	middleware := ui.NewMiddleware(jsonResponse)
 
 	log.Printf("\nServer is running at: %s", os.Getenv("API_PORT"))
-	http.HandleFunc("/password-gen/", handler.HandlePasswordGenerator)
-	log.Fatal(http.ListenAndServe(os.Getenv("API_PORT"), nil))
+	router.HandleFunc("/password-gen/", middleware.EnablingCORS(middleware.Auth(handler.HandlePasswordGenerator)))
+	log.Fatal(http.ListenAndServe(os.Getenv("API_PORT"), router))
 
 }
 

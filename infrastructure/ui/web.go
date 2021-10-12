@@ -5,7 +5,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/marcos-dev88/go-password-generator/application"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
-	"log"
+	"github.com/marcos-dev88/go-password-generator/infrastructure/http_response"
+	"io"
 	"net/http"
 )
 
@@ -15,51 +16,51 @@ type Handler interface {
 
 type handler struct {
 	app application.PasswordGeneratorApp
+	json_resp http_response.ResponseHTTP
 }
 
-func NewHandler(app application.PasswordGeneratorApp) *handler {
-	return &handler{app: app}
+func NewHandler(app application.PasswordGeneratorApp, json_resp http_response.ResponseHTTP) *handler {
+	return &handler{app: app, json_resp: json_resp}
 }
 
 func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Request){
 
-	if req.Method != "POST" {
-		log.Printf("method not allowed")
-		http.Error(rw, "error: method not allowed", http.StatusMethodNotAllowed)
+	body, err := io.ReadAll(req.Body)
+
+	if err := h.app.Validate(body); err != nil{
+		h.defaultErrorResponse(rw, err)
 		return
 	}
-
-	decoder := json.NewDecoder(req.Body)
 
 	newUuid, err := uuid.NewUUID()
 
 	if err != nil {
-		panic(err)
+		h.defaultErrorResponse(rw, err)
+		return
 	}
 
 	password := entity.NewPasswordGen(newUuid.String(), "", 0, false, false, false)
 
-	if err := decoder.Decode(&password); err != nil {
-		panic(err)
+	err = json.Unmarshal(body, password)
+
+	if err != nil {
+		h.defaultErrorResponse(rw, err)
+		return
 	}
 
 	generatedPassword, err := h.app.GeneratePassword(password)
 
-	_, err = h.app.SavePasswordGen(generatedPassword)
-
 	if err != nil {
-		panic(err)
+		h.defaultErrorResponse(rw, err)
+		return
 	}
 
-	if err != nil {
-		panic(err)
-	}
+	h.json_resp.ResponseJSON(rw, http_response.NewResponseHTTP(http.StatusOK, generatedPassword))
+}
 
-	response, _ := json.Marshal(&generatedPassword)
-
-	rw.Header().Set("Content-Type","application-json")
-	rw.WriteHeader(http.StatusOK)
-	rw.Write(response)
+func (h *handler) defaultErrorResponse(rw http.ResponseWriter, err error) {
+	newErr := http_response.NewCustomError(http.StatusInternalServerError, err.Error())
+	h.json_resp.ErrorJSON(rw, *newErr)
 }
 
 
