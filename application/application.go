@@ -17,7 +17,7 @@ type PasswordGeneratorApp interface {
 	CheckAllCharsQuantity(password *entity.PasswordGen) bool
 	CheckCharConsiderations(password entity.PasswordGen) []rune
 	GeneratePassword(password *entity.PasswordGen) (*entity.PasswordGen, error)
-	Validate(password entity.PasswordGen) error
+	Validate(body []byte) error
 }
 
 type passwordGeneratorApp struct {
@@ -87,8 +87,8 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 	return password, nil
 }
 
-func (p passwordGeneratorApp) Validate(password entity.PasswordGen) error {
-	return p.passGenEntity.Validate(password)
+func (p passwordGeneratorApp) Validate(body []byte) error {
+	return p.passGenEntity.Validate(body)
 }
 
 func (p *passwordGeneratorApp) GetLastTenPasswords() ([]*entity.PasswordGen, error) {
