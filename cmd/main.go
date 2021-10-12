@@ -48,7 +48,7 @@ func main() {
 
 	servicePass := service.NewService(passwordGen)
 
-	app := application.NewApplication(repo, servicePass)
+	app := application.NewApplication(passwordGen, repo, servicePass)
 	jsonResponse := http_response.NewResponseHTTP(0, "")
 
 	cli := ui.NewCli(app)
