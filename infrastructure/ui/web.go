@@ -6,6 +6,7 @@ import (
 	"github.com/marcos-dev88/go-password-generator/application"
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
 	"github.com/marcos-dev88/go-password-generator/infrastructure/http_response"
+	"io"
 	"net/http"
 )
 
@@ -24,7 +25,12 @@ func NewHandler(app application.PasswordGeneratorApp, json_resp http_response.Re
 
 func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Request){
 
-	decoder := json.NewDecoder(req.Body)
+	body, err := io.ReadAll(req.Body)
+
+	if err := h.app.Validate(body); err != nil{
+		h.defaultErrorResponse(rw, err)
+		return
+	}
 
 	newUuid, err := uuid.NewUUID()
 
@@ -35,7 +41,9 @@ func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Requ
 
 	password := entity.NewPasswordGen(newUuid.String(), "", 0, false, false, false)
 
-	if err := decoder.Decode(&password); err != nil {
+	err = json.Unmarshal(body, password)
+
+	if err != nil {
 		h.defaultErrorResponse(rw, err)
 		return
 	}
