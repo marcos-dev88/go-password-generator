@@ -1,10 +1,14 @@
 package entity
 
 import (
+	"errors"
+	"fmt"
+	"reflect"
 	"regexp"
 )
 
 type PasswordGenerator interface {
+	Validate(password PasswordGen) error
 	GetPasswordNumbers(password string) []string
 	GetPasswordLetters(password string) []string
 	GetPasswordSpecialChars(password string) []string
@@ -45,6 +49,36 @@ func NewPasswordGen(uuid string, password string, length int, hasLetter, hasNumb
 		HasNumber:      hasNumber,
 		HasSpecialChar: hasSpecialChar,
 	}
+}
+
+func (p *PasswordGen) Validate(password PasswordGen) error {
+
+	if err := validatePasswordBodyParamsTypes(password); err != nil{
+		return err
+	}
+
+	return nil
+}
+
+func validatePasswordBodyParamsTypes(password PasswordGen) error {
+
+	if reflect.TypeOf(password.Length).Kind() != reflect.Int {
+		return errors.New(fmt.Sprintf("error: expected a int type and %v given, use an integer value example: 32", reflect.TypeOf(password.Length).Kind()))
+	}
+
+	if reflect.TypeOf(password.HasSpecialChar).Kind() != reflect.Bool {
+		return errors.New(fmt.Sprintf("error: expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(password.HasSpecialChar).Kind()))
+	}
+
+	if reflect.TypeOf(password.HasNumber).Kind() != reflect.Bool {
+		return errors.New(fmt.Sprintf("error: expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(password.HasNumber).Kind()))
+	}
+
+	if reflect.TypeOf(password.HasLetter).Kind() != reflect.Bool {
+		return errors.New(fmt.Sprintf("error: expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(password.HasLetter).Kind()))
+	}
+
+	return nil
 }
 
 func (p *PasswordGen) GetPasswordNumbers(password string) []string {
