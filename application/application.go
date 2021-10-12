@@ -17,6 +17,7 @@ type PasswordGeneratorApp interface {
 	CheckAllCharsQuantity(password *entity.PasswordGen) bool
 	CheckCharConsiderations(password entity.PasswordGen) []rune
 	GeneratePassword(password *entity.PasswordGen) (*entity.PasswordGen, error)
+	Validate(password entity.PasswordGen) error
 }
 
 type passwordGeneratorApp struct {
@@ -25,20 +26,20 @@ type passwordGeneratorApp struct {
 	passService   service.Service
 }
 
-func NewApplication(passGenRepo repository.Repository, passService service.Service) *passwordGeneratorApp {
-	return &passwordGeneratorApp{passGenRepo: passGenRepo, passService: passService}
+func NewApplication(passGenEntity entity.PasswordGenerator, passGenRepo repository.Repository, passService service.Service) *passwordGeneratorApp {
+	return &passwordGeneratorApp{passGenEntity: passGenEntity, passGenRepo: passGenRepo, passService: passService}
 }
 
 func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*entity.PasswordGen, error) {
 	//Getting password configs of kind of password what client want
-	passwordChars := p.passService.CheckCharConsiderations(*password)
+	passwordChars := p.CheckCharConsiderations(*password)
 
 	//Generating a password by length
-	generatedPass, err := p.passService.GeneratePasswordByLength(password.Length, passwordChars)
+	generatedPass, err := p.GeneratePasswordByLength(password.Length, passwordChars)
 
 	password.Password = generatedPass
 
-	passExists, errExists := p.passGenRepo.PasswordExists(password.Password)
+	passExists, errExists := p.PasswordExists(password.Password)
 
 	if errExists == nil && passExists {
 		_, err := p.GeneratePassword(password)
@@ -84,6 +85,10 @@ func (p *passwordGeneratorApp) GeneratePassword(password *entity.PasswordGen) (*
 	}
 
 	return password, nil
+}
+
+func (p passwordGeneratorApp) Validate(password entity.PasswordGen) error {
+	return p.passGenEntity.Validate(password)
 }
 
 func (p *passwordGeneratorApp) GetLastTenPasswords() ([]*entity.PasswordGen, error) {
