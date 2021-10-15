@@ -20,7 +20,7 @@ docker-compose v1.25 or later.
 5. You must define an `API-KEY` in your header, this api-key you define in your `.env` file;<br />
 OBS.: It could be any value, but you must define this value in reader of request with name `api-token`;<br />
 6. After running the project, you could make a request at this URL: `http://localhost:{YOUR_API_PORT}/password-gen/`.<br />
-OBS.: If you didn't have defined your api port, the project will run at port `8095` by default.
+OBS.: If you didn't have defined your api port, the project will run at port `8095` by default.<br />
 OBS2.: If you're using OS Windows, you could run this command to start: `docker-compose up --build`.
 
 ### Run application/instalation:
