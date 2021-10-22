@@ -8,7 +8,7 @@ docker-compose v1.25 or later.
 1. Rename `.env.example` file to `.env`; 
 2. Define your environments like database user and password or api port;
 3. Run application;
-4. It accepts a `POST` request with these body:
+4. It accepts a `POST` request with this body:
    ```shell script
    {
       "length": 32,             # Password Length
