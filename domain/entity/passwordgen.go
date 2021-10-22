@@ -67,23 +67,23 @@ func (p *PasswordGen) Validate(body []byte) error {
 	}
 
 	if expectedBody["length"] == 0 {
-		return errors.New("error: expected a json key 'length' with a value: 8, 16, 32 or 64")
+		return errors.New("expected a json key 'length' with a value: 8, 16, 32 or 64")
 	}
 
 	if reflect.TypeOf(expectedBody["length"]).Kind() != reflect.Float64 {
-		return errors.New(fmt.Sprintf("error: expected a float64 type and %v given, use an integer value example: 32", reflect.TypeOf(expectedBody["length"]).Kind()))
+		return errors.New(fmt.Sprintf("expected a float64 type and %v given, use an integer value example: 32", reflect.TypeOf(expectedBody["length"]).Kind()))
 	}
 
 	if reflect.TypeOf(expectedBody["has_special_char"]).Kind() != reflect.Bool {
-		return errors.New(fmt.Sprintf("error: expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(expectedBody["has_special_char"]).Kind()))
+		return errors.New(fmt.Sprintf("expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(expectedBody["has_special_char"]).Kind()))
 	}
 
 	if reflect.TypeOf(expectedBody["has_number"]).Kind() != reflect.Bool {
-		return errors.New(fmt.Sprintf("error: expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(expectedBody["has_number"]).Kind()))
+		return errors.New(fmt.Sprintf("expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(expectedBody["has_number"]).Kind()))
 	}
 
 	if reflect.TypeOf(expectedBody["has_letter"]).Kind() != reflect.Bool {
-		return errors.New(fmt.Sprintf("error: expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(expectedBody["has_letter"]).Kind()))
+		return errors.New(fmt.Sprintf("expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(expectedBody["has_letter"]).Kind()))
 	}
 
 
@@ -112,13 +112,13 @@ func validateLength (lengthValue float64) error {
 		(lengthValue == 64) {
 		return nil
 	}else{
-		return errors.New(fmt.Sprintf("error: length field must receive one of this numbers: 8, 16, 32, 64 and %v given", lengthValue))
+		return errors.New(fmt.Sprintf("length field must receive one of this numbers: 8, 16, 32, 64 and %v given", lengthValue))
 	}
 }
 
 func validateConditions(conditions []bool) error {
 	if !conditions[0] && !conditions[1] && !conditions[2] {
-		return errors.New("error: not condition given, you must define if your password has just numbers, letters or special char. example: 'has_number: true")
+		return errors.New("no condition given, you must define if your password has just numbers, letters or special char. example: 'has_number: true")
 	}
 	return nil
 }
