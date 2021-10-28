@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:latest
 
 WORKDIR /passgen-app/src/go-api-password-generator
 
