@@ -7,17 +7,15 @@ import (
 )
 
 type PasswordGeneratorApp interface {
+	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
+	GeneratePassword(password *entity.PasswordGen) (*entity.PasswordGen, error)
+	Validate(body []byte) error
+}
+
+type PasswordGeneratorDB interface {
 	GetLastTenPasswords() ([]*entity.PasswordGen, error)
 	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
 	PasswordExists(password string) (bool, error)
-	GeneratePasswordByLength(length int, passCharacters []rune) (string, error)
-	CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool
-	CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool
-	CheckLettersAndNumbersQuantity(password *entity.PasswordGen) bool
-	CheckAllCharsQuantity(password *entity.PasswordGen) bool
-	CheckCharConsiderations(password entity.PasswordGen) []rune
-	GeneratePassword(password *entity.PasswordGen) (*entity.PasswordGen, error)
-	Validate(body []byte) error
 }
 
 type passwordGeneratorApp struct {
