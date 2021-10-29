@@ -25,6 +25,7 @@ func NewService(passGen entity.PasswordGenerator) *service {
 	return &service{passGen: passGen}
 }
 
+// GeneratePasswordByLength - It generates a random password by defined length and your own consideration of chars to make it
 func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (string, error) {
 	rand.Seed(time.Now().UnixNano())
 	randomCharArray := make([]rune, length)
@@ -133,6 +134,7 @@ func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (s
 	}
 }
 
+// CheckSpecialCharAndLettersQuantity - It Checks password's special characters and letters according to its length
 func (s *service) CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool {
 	passwordLetters := s.passGen.GetPasswordLetters(password.Password)
 	passwordSpecialChars := s.passGen.GetPasswordSpecialChars(password.Password)
@@ -154,6 +156,7 @@ func (s *service) CheckSpecialCharAndLettersQuantity(password *entity.PasswordGe
 	return true
 }
 
+// CheckSpecialCharAndNumbersQuantity - It Checks password's special characters and numbers according to its length
 func (s *service) CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGen) bool {
 	passwordNumbers := s.passGen.GetPasswordNumbers(password.Password)
 	passwordSpecialChars := s.passGen.GetPasswordSpecialChars(password.Password)
@@ -175,6 +178,7 @@ func (s *service) CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGe
 	return true
 }
 
+// CheckLettersAndNumbersQuantity - It Checks password's letters and numbers according to its length
 func (s *service) CheckLettersAndNumbersQuantity(password *entity.PasswordGen) bool {
 	passwordNumbers := s.passGen.GetPasswordNumbers(password.Password)
 	passwordLetters := s.passGen.GetPasswordLetters(password.Password)
@@ -196,6 +200,7 @@ func (s *service) CheckLettersAndNumbersQuantity(password *entity.PasswordGen) b
 	return true
 }
 
+// CheckAllCharsQuantity - It Checks password's criteria of all kind of characters
 func (s *service) CheckAllCharsQuantity(password *entity.PasswordGen) bool {
 	passwordNumbers := s.passGen.GetPasswordNumbers(password.Password)
 	passwordLetters := s.passGen.GetPasswordLetters(password.Password)
@@ -218,6 +223,7 @@ func (s *service) CheckAllCharsQuantity(password *entity.PasswordGen) bool {
 	return true
 }
 
+// CheckCharConsiderations - It Checks password's considerations, this way, check which characters it will have
 func (s *service) CheckCharConsiderations(password entity.PasswordGen) []rune {
 
 	switch {
