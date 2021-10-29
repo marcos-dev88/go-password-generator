@@ -216,14 +216,13 @@ func TestService_GeneratePasswordByLength(t *testing.T) {
 		}
 	})
 
-	// TODO: Improve this test, checking an way to handler errors in goroutines
-	//t.Run("Test_Generate_Password_error", func(t *testing.T) {
-	//	_, err := testService.GeneratePasswordByLength(0, lettersMock)
-	//
-	//	if err == nil {
-	//		t.Fatalf("We expected an error here")
-	//	}
-	//})
+	t.Run("Test_Generate_Password_error", func(t *testing.T) {
+		_, err := testService.GeneratePasswordByLength(0, lettersMock)
+
+		if err == nil {
+			t.Fatalf("We expected an error here")
+		}
+	})
 }
 
 func TestService_CheckSpecialCharAndLettersQuantity(t *testing.T) {
