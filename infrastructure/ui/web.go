@@ -55,7 +55,7 @@ func (h *handler) HandlePasswordGenerator(rw http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	h.json_resp.ResponseJSON(rw, http_response.NewResponseHTTP(http.StatusOK, generatedPassword))
+	h.json_resp.ResponseJSON(rw, http_response.NewResponseHTTP(http.StatusCreated, generatedPassword))
 }
 
 func (h *handler) defaultErrorResponse(rw http.ResponseWriter, err error) {
