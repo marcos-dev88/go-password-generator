@@ -2,7 +2,7 @@ version: '3.4'
 services:
   passgen-app:
     build:
-      dockerfile: ./docker/server/Dockerfile
+      dockerfile: docker/Dockerfile_Server
       context: .
     container_name: go-password-generator-app
     depends_on:
