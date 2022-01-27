@@ -143,7 +143,7 @@ func (s *service) CheckSpecialCharAndLettersQuantity(password *entity.PasswordGe
 	passwordSpecialChars := s.passGen.GetPasswordSpecialChars(password.Password)
 
 	if password.Length >= 8 && password.Length < 16 {
-		if len(passwordLetters) < 3 && len(passwordSpecialChars) < 3 {
+		if len(passwordLetters) < 2 && len(passwordSpecialChars) < 2 {
 			return false
 		}
 	} else if password.Length >= 16 && password.Length < 32 {
@@ -164,7 +164,7 @@ func (s *service) CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGe
 	passwordSpecialChars := s.passGen.GetPasswordSpecialChars(password.Password)
 
 	if password.Length >= 8 && password.Length < 16 {
-		if len(passwordNumbers) < 3 && len(passwordSpecialChars) < 3 {
+		if len(passwordNumbers) < 2 && len(passwordSpecialChars) < 2 {
 			return false
 		}
 	} else if password.Length >= 16 && password.Length < 32 {
@@ -185,7 +185,7 @@ func (s *service) CheckLettersAndNumbersQuantity(password *entity.PasswordGen) b
 	passwordLetters := s.passGen.GetPasswordLetters(password.Password)
 
 	if password.Length >= 8 && password.Length < 16 {
-		if len(passwordNumbers) < 3 && len(passwordLetters) < 3 {
+		if len(passwordNumbers) < 2 && len(passwordLetters) < 2 {
 			return false
 		}
 	} else if password.Length >= 16 && password.Length < 32 {
