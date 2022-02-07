@@ -2,10 +2,11 @@ package service
 
 import (
 	"errors"
-	"github.com/marcos-dev88/go-password-generator/domain/entity"
 	"math/rand"
 	"sync"
 	"time"
+
+	"github.com/marcos-dev88/go-password-generator/domain/entity"
 )
 
 type Service interface {
@@ -29,11 +30,10 @@ func NewService(passGen entity.PasswordGenerator) *service {
 func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (string, error) {
 	rand.Seed(time.Now().UnixNano())
 	randomCharArray := make([]rune, length)
-	passwordListChannel := make(chan []string)
-	var passwordList []string
 
 	// Channels
 	inCH, outCH, returnCH, errorCH, errDoneCH := make(chan string, 3), make(chan string, 3), make(chan string, 3), make(chan error), make(chan error)
+	passwordListChannel := make(chan []string)
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -71,52 +71,10 @@ func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (s
 		close(inCH)
 	}()
 
-	// Checking the duplicated passwords and removing them
-	removeDuplicatedPasswords := func(inputChan chan string, outputChan chan string) {
-		var previousPassword string
-		for actualPassword := range inputChan {
-			if actualPassword != previousPassword {
-				previousPassword = actualPassword
-				outputChan <- actualPassword
-			}
-		}
-		close(outputChan)
-	}
-
-	getPasswords := func(outputChan <-chan string, newWg *sync.WaitGroup) {
-		defer newWg.Done()
-
-		for v := range outCH {
-			passwordList = append(passwordList, v)
-		}
-		passwordListChannel <- passwordList
-	}
-
-	// Send passwords to channel
-	sendPasswordsToChan := func(receiveCh chan string, newWg *sync.WaitGroup) {
-		defer newWg.Done()
-
-		go func() {
-			for _, v := range <-passwordListChannel {
-				receiveCh <- v
-			}
-			close(receiveCh)
-		}()
-	}
-
-	// Get errors from CH, this way we could handle errors
-	getErrFromCh := func(errCh chan error, newWg *sync.WaitGroup) {
-		defer newWg.Done()
-		select {
-		case err := <-errorCH:
-			errDoneCH <- err
-		}
-	}
-
 	go removeDuplicatedPasswords(inCH, outCH)
-	go getPasswords(outCH, &wg)
-	go sendPasswordsToChan(returnCH, &wg)
-	go getErrFromCh(errorCH, &wg)
+	go getPasswords(passwordListChannel, outCH, &wg)
+	go returnAllPasswords(passwordListChannel, returnCH, &wg)
+	go chanErrorHandler(errorCH, errDoneCH, &wg)
 
 	select {
 	case generatedPassword := <-returnCH:
@@ -134,21 +92,65 @@ func (s *service) GeneratePasswordByLength(length int, passCharacters []rune) (s
 	}
 }
 
+// Checking the duplicated passwords and removing them
+func removeDuplicatedPasswords(inputChannel, outputChannel chan string) {
+	var previousPassword string
+	for actualPassword := range inputChannel {
+		if actualPassword != previousPassword {
+			previousPassword = actualPassword
+			outputChannel <- actualPassword
+		}
+	}
+	close(outputChannel)
+}
+
+// getPasswords: Get all generated passswords and send it to an array
+func getPasswords(generatedPasswods chan []string, outputSlice chan string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	var passwordList []string
+
+	for v := range outputSlice {
+		passwordList = append(passwordList, v)
+	}
+
+	generatedPasswods <- passwordList
+}
+
+func returnAllPasswords(passwordList chan []string, receiveCh chan string, newWg *sync.WaitGroup) {
+	defer newWg.Done()
+
+	go func() {
+		for _, v := range <-passwordList {
+			receiveCh <- v
+		}
+		close(receiveCh)
+	}()
+}
+
+// Get errors from CH, this way we could handle errors
+func chanErrorHandler(errorInput chan error, errorOutput chan error, newWg *sync.WaitGroup) {
+	defer newWg.Done()
+	select {
+	case err := <-errorInput:
+		errorOutput <- err
+	}
+}
+
 // CheckSpecialCharAndLettersQuantity - It Checks password's special characters and letters according to its length
 func (s *service) CheckSpecialCharAndLettersQuantity(password *entity.PasswordGen) bool {
 	passwordLetters := s.passGen.GetPasswordLetters(password.Password)
 	passwordSpecialChars := s.passGen.GetPasswordSpecialChars(password.Password)
 
-	switch password.Length {
-	case 8:
-		if len(passwordLetters) < 3 && len(passwordSpecialChars) < 3 {
+	if password.Length >= 8 && password.Length < 16 {
+		if len(passwordLetters) < 2 && len(passwordSpecialChars) < 2 {
 			return false
 		}
-	case 16:
+	} else if password.Length >= 16 && password.Length < 32 {
 		if len(passwordLetters) < 5 && len(passwordSpecialChars) < 5 {
 			return false
 		}
-	case 32:
+	} else if password.Length >= 32 && password.Length <= 64 {
 		if len(passwordLetters) < 6 && len(passwordSpecialChars) < 6 {
 			return false
 		}
@@ -161,16 +163,15 @@ func (s *service) CheckSpecialCharAndNumbersQuantity(password *entity.PasswordGe
 	passwordNumbers := s.passGen.GetPasswordNumbers(password.Password)
 	passwordSpecialChars := s.passGen.GetPasswordSpecialChars(password.Password)
 
-	switch password.Length {
-	case 8:
-		if len(passwordNumbers) < 3 && len(passwordSpecialChars) < 3 {
+	if password.Length >= 8 && password.Length < 16 {
+		if len(passwordNumbers) < 2 && len(passwordSpecialChars) < 2 {
 			return false
 		}
-	case 16:
+	} else if password.Length >= 16 && password.Length < 32 {
 		if len(passwordNumbers) < 5 && len(passwordSpecialChars) < 5 {
 			return false
 		}
-	case 32:
+	} else if password.Length >= 32 && password.Length <= 64 {
 		if len(passwordNumbers) < 6 && len(passwordSpecialChars) < 6 {
 			return false
 		}
@@ -183,16 +184,15 @@ func (s *service) CheckLettersAndNumbersQuantity(password *entity.PasswordGen) b
 	passwordNumbers := s.passGen.GetPasswordNumbers(password.Password)
 	passwordLetters := s.passGen.GetPasswordLetters(password.Password)
 
-	switch password.Length {
-	case 8:
-		if len(passwordNumbers) < 3 && len(passwordLetters) < 3 {
+	if password.Length >= 8 && password.Length < 16 {
+		if len(passwordNumbers) < 2 && len(passwordLetters) < 2 {
 			return false
 		}
-	case 16:
+	} else if password.Length >= 16 && password.Length < 32 {
 		if len(passwordNumbers) < 5 && len(passwordLetters) < 5 {
 			return false
 		}
-	case 32:
+	} else if password.Length >= 32 && password.Length <= 64 {
 		if len(passwordNumbers) < 6 && len(passwordLetters) < 6 {
 			return false
 		}
@@ -206,16 +206,15 @@ func (s *service) CheckAllCharsQuantity(password *entity.PasswordGen) bool {
 	passwordLetters := s.passGen.GetPasswordLetters(password.Password)
 	passwordSpecialChars := s.passGen.GetPasswordSpecialChars(password.Password)
 
-	switch password.Length {
-	case 8:
-		if len(passwordNumbers) < 2 && len(passwordLetters) < 2 && len(passwordSpecialChars) < 2 {
+	if password.Length >= 8 && password.Length < 16 {
+		if len(passwordNumbers) < 1 && len(passwordLetters) < 1 && len(passwordSpecialChars) < 1 {
 			return false
 		}
-	case 16:
+	} else if password.Length >= 16 && password.Length < 32 {
 		if len(passwordNumbers) < 3 && len(passwordLetters) < 3 && len(passwordSpecialChars) < 3 {
 			return false
 		}
-	case 32:
+	} else if password.Length >= 32 && password.Length <= 64 {
 		if len(passwordNumbers) < 6 && len(passwordLetters) < 6 && len(passwordSpecialChars) < 6 {
 			return false
 		}

@@ -61,13 +61,8 @@ func (p *PasswordGen) Validate(body []byte) error {
 		"has_special_char": false,
 	}
 
-
 	if err := json.Unmarshal(body, &expectedBody); err != nil {
 		return err
-	}
-
-	if expectedBody["length"] == 0 {
-		return errors.New("expected a json key 'length' with a value: 8, 16, 32 or 64")
 	}
 
 	if reflect.TypeOf(expectedBody["length"]).Kind() != reflect.Float64 {
@@ -85,7 +80,6 @@ func (p *PasswordGen) Validate(body []byte) error {
 	if reflect.TypeOf(expectedBody["has_letter"]).Kind() != reflect.Bool {
 		return errors.New(fmt.Sprintf("expected a boolean type and %v given, use 'true' or 'false'", reflect.TypeOf(expectedBody["has_letter"]).Kind()))
 	}
-
 
 	var conditionsSlice []bool
 	lengthValue := expectedBody["length"].(float64)
@@ -105,15 +99,17 @@ func (p *PasswordGen) Validate(body []byte) error {
 	return nil
 }
 
-func validateLength (lengthValue float64) error {
-	if (lengthValue == 8) ||
-		(lengthValue == 16) ||
-		(lengthValue == 32) ||
-		(lengthValue == 64) {
-		return nil
-	}else{
-		return errors.New(fmt.Sprintf("length field must receive one of this numbers: 8, 16, 32, 64 and %v given", lengthValue))
+func validateLength(lengthValue float64) error {
+
+	if lengthValue < 8 {
+		return errors.New(fmt.Sprintf("length field must have a value bigger than 8 and %v given", lengthValue))
 	}
+
+	if lengthValue > 64 {
+		return errors.New(fmt.Sprintf("length field must have a value lower than 64 and %v given", lengthValue))
+	}
+
+	return nil
 }
 
 func validateConditions(conditions []bool) error {

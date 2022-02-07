@@ -3,17 +3,12 @@ package persistence
 import (
 	"context"
 	"encoding/json"
+	"log"
+
 	"github.com/marcos-dev88/go-password-generator/domain/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
 )
-
-type Repository interface {
-	GetLastTenPasswords() ([]*entity.PasswordGen, error)
-	SavePasswordGen(*entity.PasswordGen) (*entity.PasswordGen, error)
-	PasswordExists(password string) (bool, error)
-}
 
 type repository struct {
 	mongodb MongoDB
@@ -23,7 +18,7 @@ func NewRepository(mongodb MongoDB) *repository {
 	return &repository{mongodb: mongodb}
 }
 
-func (r *repository) GetLastTenPasswords() ([]*entity.PasswordGen, error){
+func (r *repository) GetLastTenPasswords() ([]*entity.PasswordGen, error) {
 
 	_, table, cntx, err := r.mongodb.GetConn()
 

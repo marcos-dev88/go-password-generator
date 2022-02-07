@@ -2,7 +2,7 @@ version: '3.4'
 services:
   passgen-app:
     build:
-      dockerfile: ./docker/server/Dockerfile
+      dockerfile: docker/Dockerfile_Server
       context: .
     container_name: go-password-generator-app
     depends_on:
@@ -12,7 +12,7 @@ services:
     ports:
       - "8095:8095"
     networks:
-      net:
+      password_gen_net:
         ipv4_address: 172.20.0.2
 
   mongodb:
@@ -25,11 +25,11 @@ services:
       - "27018:27017"
     command: --auth
     networks:
-      net:
+      password_gen_net:
         ipv4_address: 172.20.0.3
 
 networks:
-  net:
+  password_gen_net:
     driver: bridge
     ipam:
       config:
