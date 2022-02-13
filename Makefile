@@ -11,7 +11,7 @@ strong-password:
 	@docker rm $$(docker ps -a -f status=exited -q) -f >/dev/null 2>&1
 
 build-docker:
-	bash ./scripts/docker/network_config.sh;
+	@bash ./scripts/docker/network_config.sh;
 	docker-compose up --build
 
 run-docker:
