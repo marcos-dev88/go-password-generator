@@ -12,8 +12,8 @@ services:
     ports:
       - "8095:8095"
     networks:
-      password_gen_net:
-        ipv4_address: 172.20.0.2
+      default:
+        ipv4_address: 206.8.3.2
 
   mongodb:
     image: mongo
@@ -25,12 +25,10 @@ services:
       - "27018:27017"
     command: --auth
     networks:
-      password_gen_net:
-        ipv4_address: 172.20.0.3
+      default:
+        ipv4_address: 206.8.3.3
 
 networks:
-  password_gen_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24
+  default:
+    external:
+      name: password_gen_net_dev
